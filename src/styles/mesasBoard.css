@@ -1,0 +1,30 @@
+/* Wrapper para scroll horizontal en mobile */
+.mesas-board-wrapper {
+  width: 100%;
+  overflow-x: auto; /* Scroll horizontal */
+  -webkit-overflow-scrolling: touch; /* Para smooth scrolling en iOS */
+  padding: 10px 0;
+}
+
+/* Contenedor de mesas */
+.mesas-board-container {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-start;
+  flex-wrap: wrap; /* Para pantallas grandes, las mesas pueden saltar de fila */
+  box-sizing: border-box;
+}
+
+/* Responsive: pantallas medianas */
+@media (max-width: 900px) {
+  .mesas-board-container {
+    gap: 12px;
+  }
+}
+
+/* Responsive: pantallas pequeñas (mobile) */
+@media (max-width: 600px) {
+  .mesas-board-container {
+    flex-wrap: nowrap; /* Una fila horizontal con scroll */
+  }
+}

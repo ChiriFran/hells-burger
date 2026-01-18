@@ -1,0 +1,57 @@
+.crear-mesa-container {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-letra);
+  box-shadow: 0 4px 14px var(--color-rojo);
+  background-color: var(--color-letra);
+  color: var(--color-fondo);
+  max-width: 400px;
+  transition: 0.4s;
+  font-family: monospace;
+}
+
+.crear-mesa-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+  transition: 0.2s;
+}
+
+.crear-mesa-title {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+}
+
+.crear-mesa-form {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.crear-mesa-form input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 0.95rem;
+}
+
+.crear-mesa-form input:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.btn-crear-mesa {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #4caf50;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-crear-mesa:hover {
+  background: #66bb6a;
+}

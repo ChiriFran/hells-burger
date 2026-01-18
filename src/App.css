@@ -1,0 +1,74 @@
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  background-image: url("../public/images/logo.jpeg");
+  background-size: 50%;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+/* Capa oscura encima del fondo */
+.app-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55); /* efecto “after” oscuro */
+  z-index: 0;
+}
+
+/* Todo el contenido arriba del overlay */
+.app-main,
+.app-sidebar {
+  position: relative;
+  z-index: 1;
+}
+
+.app-main {
+  flex: 3;
+  padding: 20px 5%;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0 12px 12px 0;
+}
+
+.app-sidebar {
+  flex: 1;
+  padding: 20px;
+  border-radius: 12px 0 0 12px;
+}
+
+.app-title {
+  margin-bottom: 16px;
+  font-size: 1.6rem;
+  color: var(--color-letra);
+  font-family: monospace;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .app-container {
+    background-size: 75px;
+    background-position: left;
+    background-repeat: repeat;
+  }
+
+  /* Capa oscura encima del fondo */
+  .app-container::before {
+    background: rgba(0, 0, 0, 0.833); /* efecto “after” oscuro */
+    z-index: 0;
+  }
+
+  .app-container {
+    flex-direction: column;
+  }
+
+  .app-main {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0 0 12px 12px;
+  }
+
+  .app-sidebar {
+    border-radius: 12px 12px 0 0;
+  }
+}

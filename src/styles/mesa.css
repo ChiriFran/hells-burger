@@ -1,0 +1,128 @@
+.mesa-card {
+  color: var(--color-fondo);
+  border: 1px solid var(--color-letra);
+  box-shadow: 0 6px 18px var(--color-rojo);
+  border-radius: 14px;
+  padding: 16px 18px 18px;
+  margin: 5px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  width: 120px;
+  font-family: monospace;
+  flex: 0 0 180px;
+}
+
+.mesa-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+/* Estados */
+.mesa-libre {
+  background-color: var(--color-letra);
+}
+.mesa-ocupada {
+  background-color: var(--color-rojo);
+}
+.mesa-reservada {
+  background-color: #fff3f3;
+}
+
+/* Header */
+.mesa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.icono-mesa {
+  font-size: 22px;
+}
+
+/* Nombre */
+.mesa-nombre {
+  margin: 4px 0 10px;
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+/* Botón borrar */
+.mesa-borrar {
+  background: rgba(255, 0, 0, 0.75);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 0.9rem;
+}
+
+.mesa-borrar:hover {
+  background: rgba(255, 0, 0, 0.9);
+}
+
+/* Cuerpo */
+.mesa-body {
+  display: flex;
+  justify-content: center;
+}
+.mesa-estado {
+  font-size: 0.9rem;
+  padding: 4px 10px;
+  border-radius: 0.5rem;
+  background: var(--color-letra);
+  text-transform: capitalize;
+}
+
+/* Íconos pedidos */
+.mesa-pedidos-icons {
+  margin-top: 10px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.icono-hamburguesa {
+  font-size: 24px;
+}
+
+/* Footer: contador y despachado */
+.mesa-footer {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.mesa-despachado {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.mesa-despachado:hover {
+  background-color: #1976d2;
+}
+.mesa-despachado.marcado {
+  background-color: #4caf50;
+}
+
+.mesa-tiempo {
+  font-size: 0.85rem;
+  color: #333;
+  background: var(--color-letra);
+  padding: 3px 6px;
+  border-radius: 0.5rem;
+  min-width: 50px;
+  margin: 5px 0;
+  text-align: center;
+}

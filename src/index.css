@@ -1,0 +1,26 @@
+:root {
+  font-family: Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: var(--color-letra);
+  background-color: var(--color-fondo);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --color-letra: #e8d1af;
+  --color-fondo: #0a0b06;
+  --color-rojo: #b63925;
+  --title-font: "Helvetica";
+  --text-font: "DM Mono";
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

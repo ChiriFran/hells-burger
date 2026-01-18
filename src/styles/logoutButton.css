@@ -1,0 +1,18 @@
+.logout-btn {
+  width: 100%;
+  padding: 10px 0;
+  margin-top: 100%;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--color-letra );
+  color: var(--color-rojo);
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: #e043439e;
+  color: var(--color-letra);
+  transform: translateY(-1px);
+}
