@@ -141,10 +141,3 @@
 .btn-cerrar-caja:hover {
   background: #e53935;
 }
-
-/* Responsive: pantallas medianas */
-@media (max-width: 900px) {
-  .cierre {
-    width: calc(200% + 14px);
-  }
-}
