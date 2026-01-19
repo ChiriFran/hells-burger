@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { usePedidos } from "../hooks/usePedidos";
-import "../styles/PedidoModal.css";
+import "../styles/pedidoModal.css";
 
 export default function PedidoModal({ mesa, cerrarModal }) {
   const { crearPedido, cerrarPedido, obtenerPedidoPorId, loading } =
