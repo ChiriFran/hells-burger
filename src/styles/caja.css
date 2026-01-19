@@ -19,6 +19,9 @@
 }
 
 .caja-card {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
   background: var(--color-letra);
   border-radius: 12px;
   padding: 14px;
@@ -44,6 +47,7 @@
   align-items: center;
   justify-content: center;
   font-size: 1.4rem;
+  margin-right: 1rem;
 }
 
 .caja-value {
