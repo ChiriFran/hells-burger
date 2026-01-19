@@ -91,8 +91,28 @@
   background-color: #4caf4f8f;
 }
 
+.eliminar-pedido-btn {
+  font-family: monospace;
+  margin-top: 10px;
+  width: 40%;
+  padding: 8px;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--color-rojo);
+  color: white;
+  font-weight: 500;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.eliminar-pedido-btn:hover {
+  background: #b71c1c;
+}
+
+
 @media (max-width: 600px) {
-  .pedidos-lista-container{
+  .pedidos-lista-container {
     width: 100%;
   }
 }

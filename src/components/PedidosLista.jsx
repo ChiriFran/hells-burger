@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase/config";
-import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 import "../styles/PedidosLista.css";
 
 export default function PedidosLista() {
   const [pedidos, setPedidos] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(5); // pedidos visibles iniciales
+  const [visibleCount, setVisibleCount] = useState(5);
 
   useEffect(() => {
     const pedidosRef = collection(db, "pedidos");
@@ -24,6 +31,20 @@ export default function PedidosLista() {
 
   const cargarMas = () => {
     setVisibleCount((prev) => prev + 5);
+  };
+
+  const eliminarPedido = async (id) => {
+    const confirmar = window.confirm(
+      "¿Seguro que querés eliminar este pedido? Esta acción no se puede deshacer."
+    );
+    if (!confirmar) return;
+
+    try {
+      await deleteDoc(doc(db, "pedidos", id));
+    } catch (error) {
+      console.error("Error al eliminar pedido:", error);
+      alert("Error al eliminar el pedido");
+    }
   };
 
   const pedidosVisibles = pedidos.slice(0, visibleCount);
@@ -62,6 +83,13 @@ export default function PedidosLista() {
                   <span>Total: ${pedido.total}</span>
                   <span>Pago: {pedido.medioPago}</span>
                 </div>
+
+                <button
+                  className="eliminar-pedido-btn"
+                  onClick={() => eliminarPedido(pedido.id)}
+                >
+                  🗑 Eliminar pedido
+                </button>
               </li>
             ))}
           </ul>
