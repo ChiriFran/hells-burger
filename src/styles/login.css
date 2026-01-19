@@ -91,4 +91,10 @@
   .login-box h2 {
     font-size: 1.5rem;
   }
+  
+  .login-wrapper {
+    background-size: 75px;
+    background-position: left;
+    background-repeat: repeat;
+  }
 }
