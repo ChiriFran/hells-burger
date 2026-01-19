@@ -52,7 +52,7 @@ export default function App() {
   return (
     <div className="app-container">
       <div className="app-main">
-        <h1 className="app-title">Administrador de Mesas</h1>
+        <h1 className="app-title">Hells Admin</h1>
         <MesasBoard setMesaSeleccionada={setMesaSeleccionada} />
         <CrearMesa />
         <PedidosLista />
