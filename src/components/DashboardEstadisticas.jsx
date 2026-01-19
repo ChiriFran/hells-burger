@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useMesasContext } from "../context/MesaContext";
-import "../styles/DashboardEstadisticas.css";
+import "../styles/dashboardEstadisticas.css";
 
 export default function DashboardEstadisticas() {
   const { mesas = [], pedidos = [] } = useMesasContext();

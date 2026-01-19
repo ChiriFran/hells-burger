@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useCaja } from "../hooks/useCaja";
-import "../styles/Caja.css";
+import "../styles/caja.css";
 
 export default function Caja() {
   const { caja, agregarGasto, cerrarCaja } = useCaja();

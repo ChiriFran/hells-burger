@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { doc, runTransaction, collection } from "firebase/firestore";
 import { db } from "../firebase/config";
-import "../styles/CrearMesa.css";
+import "../styles/crearMesa.css";
 
 export default function CrearMesa() {
   const [nombre, setNombre] = useState("");

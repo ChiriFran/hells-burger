@@ -8,7 +8,7 @@ import {
   doc,
   deleteDoc,
 } from "firebase/firestore";
-import "../styles/PedidosLista.css";
+import "../styles/pedidosLista.css";
 
 export default function PedidosLista() {
   const [pedidos, setPedidos] = useState([]);
