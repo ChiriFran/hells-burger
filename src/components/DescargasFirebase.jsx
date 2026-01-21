@@ -4,7 +4,7 @@ import { collection, getDocs } from "firebase/firestore";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
-import "../styles/DescargasFirebase.css";
+import "../styles/descargasFirebase.css";
 
 export default function DescargasFirebase() {
     const [loading, setLoading] = useState(false);
