@@ -1,0 +1,74 @@
+.descargas-firebase-card {
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 16px;
+    color: var(--color-fondo);
+}
+
+.descargas-firebase-title {
+    font-size: 1.4rem;
+    font-family: monospace;
+    margin-bottom: 12px;
+    color: var(--color-letra);
+}
+
+.descargas-firebase-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--color-letra);
+    box-shadow: 0 6px 18px var(--color-rojo);
+    border-radius: 0.5rem;
+    padding: 10px 12px;
+    margin-bottom: 20px;
+    font-family: monospace;
+    font-size: 1rem;
+}
+
+.descargas-firebase-label {
+    font-weight: 500;
+}
+
+.descargas-firebase-btn-group {
+    display: flex;
+    gap: 8px;
+}
+
+.descargas-firebase-btn {
+    padding: 6px 10px;
+    border-radius: 0.2rem;
+    border: none;
+    background: var(--color-rojo);
+    color: var(--color-letra);
+    cursor: pointer;
+}
+
+.descargas-firebase-btn:hover {
+    background: #e76a6a;
+}
+
+.descargas-firebase-btn:disabled {
+    opacity: 0.5;
+}
+
+.descargas-firebase-loading {
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .descargas-firebase-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .descargas-firebase-btn-group {
+        width: 100%;
+    }
+
+    .descargas-firebase-btn {
+        flex: 1;
+    }
+}
