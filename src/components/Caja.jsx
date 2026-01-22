@@ -23,12 +23,6 @@ export default function Caja() {
       {/* HEADER */}
       <header className="caja-header">
         <h2 className="caja-title">💰 Caja del Día</h2>
-        <button
-          className="dashboard-stats-open-btn"
-          onClick={() => setOpenStats(true)}
-        >
-          📊 Ver estadísticas de caja
-        </button>
       </header>
 
       {/* RESUMEN */}
@@ -75,6 +69,12 @@ export default function Caja() {
 
         <button className="btn-cerrar-caja" onClick={cerrarCaja}>
           🔒 Cerrar caja
+        </button>
+        <button
+          className="dashboard-stats-open-btn"
+          onClick={() => setOpenStats(true)}
+        >
+          📊 Ver estadísticas de caja
         </button>
       </section>
 
