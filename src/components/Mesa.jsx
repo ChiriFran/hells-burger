@@ -28,8 +28,8 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
     mesa.estado === "libre"
       ? "mesa-libre"
       : mesa.estado === "ocupada"
-      ? "mesa-ocupada"
-      : "mesa-reservada";
+        ? "mesa-ocupada"
+        : "mesa-reservada";
 
   const pedido = pedidos.find((p) => p.id === mesa.pedidoActual);
   const items = pedido?.productos || pedido?.items || [];
@@ -73,11 +73,16 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
 
       {items.length > 0 && (
         <div className="mesa-pedidos-icons">
-          {items.map((_, index) => (
-            <span key={index} className="icono-hamburguesa">
-              🍔
-            </span>
-          ))}
+          {items.map((item, index) =>
+            Array.from({ length: item.cantidad || 1 }).map((_, i) => (
+              <span
+                key={`${index}-${i}`}
+                className="icono-hamburguesa"
+              >
+                🍔
+              </span>
+            ))
+          )}
         </div>
       )}
 
