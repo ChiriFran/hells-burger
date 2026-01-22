@@ -9,7 +9,7 @@
   font-family: monospace;
 }
 
-.dashboard-toggle-button{
+.dashboard-toggle-button {
   margin-bottom: 1rem;
   padding: 5px 10px;
   border-radius: 0.5rem;
@@ -105,4 +105,26 @@
 
 .ticket .dashboard-icon {
   background: #f3e5f5;
+}
+
+.dashboard-stats-open-btn {
+  font-size: 0.8rem;
+  font-family: monospace;
+  font-weight: 900;
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px 16px;
+  border-radius: 0.5rem;
+  background: var(--color-letra);
+  color: var(--color-fondo);
+  border: none;
+  box-shadow: 0 6px 18px var(--color-rojo);
+  cursor: pointer;
+  transition: .4s;
+}
+
+.dashboard-stats-open-btn:hover {
+  background: var(--color-rojo);
+  color: var(--color-letra);
+  transition: .4s;
 }

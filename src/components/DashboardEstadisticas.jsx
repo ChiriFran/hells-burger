@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useMesasContext } from "../context/MesaContext";
+import EstadisticasModal from "./EstadisticasModal";
 import "../styles/dashboardEstadisticas.css";
 
 export default function DashboardEstadisticas() {
   const { mesas = [], pedidos = [] } = useMesasContext();
+
   const [stats, setStats] = useState({});
   const [modoDiario, setModoDiario] = useState(true);
+
+  // ✅ ESTADO DEL MODAL (ESTO FALTABA)
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     const hoy = new Date();
@@ -15,27 +20,31 @@ export default function DashboardEstadisticas() {
 
     const pedidosFiltrados = modoDiario
       ? pedidos.filter((p) => {
-          if (!p.horaCierre) return false;
-          // Convertimos Timestamp de Firebase a Date
-          const fechaCierre = p.horaCierre.toDate
-            ? p.horaCierre.toDate()
-            : new Date(p.horaCierre);
-          return (
-            fechaCierre.getFullYear() === hoyAnio &&
-            fechaCierre.getMonth() === hoyMes &&
-            fechaCierre.getDate() === hoyDia
-          );
-        })
+        if (!p.horaCierre) return false;
+
+        const fechaCierre = p.horaCierre.toDate
+          ? p.horaCierre.toDate()
+          : new Date(p.horaCierre);
+
+        return (
+          fechaCierre.getFullYear() === hoyAnio &&
+          fechaCierre.getMonth() === hoyMes &&
+          fechaCierre.getDate() === hoyDia
+        );
+      })
       : pedidos;
 
     const libres = mesas.filter((m) => m.estado === "libre").length;
     const ocupadas = mesas.filter((m) => m.estado === "ocupada").length;
+
     const activos = pedidosFiltrados.filter(
       (p) => p.estado !== "pagado"
     ).length;
+
     const completados = pedidosFiltrados.filter(
       (p) => p.estado === "pagado"
     ).length;
+
     const totalProductos = pedidosFiltrados.reduce(
       (acc, p) => acc + (p.productos?.length || 0),
       0
@@ -120,6 +129,7 @@ export default function DashboardEstadisticas() {
         <h2 className="dashboard-title">
           Estadísticas {modoDiario ? "del Día" : "Generales"}
         </h2>
+
         <button
           className="dashboard-toggle-button"
           onClick={() => setModoDiario(!modoDiario)}
@@ -127,6 +137,7 @@ export default function DashboardEstadisticas() {
           {modoDiario ? "Ver Generales" : "Ver Diario"}
         </button>
       </div>
+
       <div className="dashboard-grid">
         {items.map((item, i) => (
           <div key={i} className={`dashboard-card ${item.className}`}>
@@ -138,6 +149,22 @@ export default function DashboardEstadisticas() {
           </div>
         ))}
       </div>
+
+      {/* BOTÓN MODAL */}
+      <button
+        className="dashboard-stats-open-btn"
+        onClick={() => setOpenModal(true)}
+      >
+        Ver estadísticas detalladas 📊
+      </button>
+
+      {/* MODAL */}
+      <EstadisticasModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        stats={stats}
+        modoDiario={modoDiario}
+      />
     </div>
   );
 }
