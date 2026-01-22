@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { useCaja } from "../hooks/useCaja";
+import CajaEstadisticasModal from "./CajaEstadisticasModal";
 import "../styles/caja.css";
 
 export default function Caja() {
   const { caja, agregarGasto, cerrarCaja } = useCaja();
+
   const [montoGasto, setMontoGasto] = useState("");
+  const [openStats, setOpenStats] = useState(false);
 
   const totalCierre = caja.ingresos - caja.gastos;
 
@@ -17,9 +20,19 @@ export default function Caja() {
 
   return (
     <div className="caja-container">
-      <h2 className="caja-title">Caja del Día</h2>
+      {/* HEADER */}
+      <header className="caja-header">
+        <h2 className="caja-title">💰 Caja del Día</h2>
+        <button
+          className="dashboard-stats-open-btn"
+          onClick={() => setOpenStats(true)}
+        >
+          📊 Ver estadísticas de caja
+        </button>
+      </header>
 
-      <div className="caja-cards">
+      {/* RESUMEN */}
+      <section className="caja-cards">
         <div className="caja-card ingresos">
           <div className="caja-icon">💵</div>
           <div>
@@ -43,26 +56,34 @@ export default function Caja() {
             <span className="caja-label">Cierre</span>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="caja-actions">
+      {/* ACCIONES */}
+      <section className="caja-actions">
         <div className="gasto-personalizado">
           <input
             type="number"
-            placeholder="Monto gasto"
+            placeholder="Monto del gasto"
             value={montoGasto}
             onChange={(e) => setMontoGasto(e.target.value)}
             min="1"
           />
           <button className="btn-gasto" onClick={handleAgregarGasto}>
-            ➖ Agregar Gasto
+            ➖ Agregar gasto
           </button>
         </div>
 
         <button className="btn-cerrar-caja" onClick={cerrarCaja}>
-          🔒 Cerrar Caja
+          🔒 Cerrar caja
         </button>
-      </div>
+      </section>
+
+      {/* MODAL ESTADÍSTICAS */}
+      <CajaEstadisticasModal
+        open={openStats}
+        onClose={() => setOpenStats(false)}
+        caja={caja}
+      />
     </div>
   );
 }

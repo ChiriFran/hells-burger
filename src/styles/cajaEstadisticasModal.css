@@ -1,0 +1,92 @@
+.caja-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1300;
+}
+
+.caja-modal-container {
+    background: var(--color-fondo);
+    color: var(--color-letra);
+    width: 95%;
+    max-width: 900px;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 6px 18px var(--color-rojo);
+}
+
+.caja-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.caja-modal-header button {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.caja-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.caja-kpi {
+    padding: 16px;
+    text-align: center;
+    border-radius: 12px;
+    font-weight: 600;
+    color: var(--color-fondo);
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.caja-kpi.ingresos {
+    background: var(--color-letra);
+}
+
+.caja-kpi.gastos {
+    background: var(--color-letra);
+}
+
+.caja-kpi.cierre {
+    background: var(--color-letra);
+}
+
+.caja-kpi strong {
+    display: block;
+    font-size: 1.6rem;
+}
+
+.caja-charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.caja-chart-card {
+    background: var(--color-letra);
+    color: var(--color-fondo);
+    padding: 16px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 6px 18px var(--color-rojo);
+}
+
+.caja-chart-card h4 {
+    margin-bottom: 10px;
+}
+
+.caja-chart-card small {
+    opacity: 0.7;
+}
