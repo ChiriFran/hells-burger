@@ -1,29 +1,43 @@
+/* OVERLAY */
 .caja-modal-overlay {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(6px);
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     z-index: 1300;
 }
 
+/* CONTENEDOR */
 .caja-modal-container {
-    background: var(--color-fondo);
-    color: var(--color-letra);
     width: 95%;
     max-width: 1100px;
-    height: 90vh;
+    max-height: 90vh;
+    background: var(--color-fondo);
+    color: var(--color-letra);
     border-radius: 16px;
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* IMPORTANTE */
     box-shadow: 0 6px 18px var(--color-rojo);
+    font-family: monospace;
 }
 
+/* HEADER FIJO */
 .caja-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 16px 20px;
+    border-bottom: 3px dashed rgba(187, 15, 15, 0.4);
+}
+
+.caja-modal-header h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
 }
 
 .caja-modal-header button {
@@ -31,13 +45,32 @@
     border: none;
     font-size: 22px;
     cursor: pointer;
+    color: var(--color-letra);
 }
 
+/* BODY SCROLLEABLE */
+.caja-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px;
+}
+
+/* SCROLL BONITO */
+.caja-modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.caja-modal-body::-webkit-scrollbar-thumb {
+    background: var(--color-rojo);
+    border-radius: 6px;
+}
+
+/* KPIs */
 .caja-kpis {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 16px;
-    margin: 20px 0;
+    margin-bottom: 24px;
 }
 
 .caja-kpi {
@@ -45,30 +78,18 @@
     text-align: center;
     border-radius: 12px;
     font-weight: 600;
+    background: var(--color-letra);
     color: var(--color-fondo);
     display: flex;
-    flex-flow: column;
-    align-items: center;
-    justify-content: space-around;
-}
-
-.caja-kpi.ingresos {
-    background: var(--color-letra);
-}
-
-.caja-kpi.gastos {
-    background: var(--color-letra);
-}
-
-.caja-kpi.cierre {
-    background: var(--color-letra);
+    flex-direction: column;
+    gap: 6px;
 }
 
 .caja-kpi strong {
-    display: block;
     font-size: 1.6rem;
 }
 
+/* CHARTS */
 .caja-charts {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -86,8 +107,22 @@
 
 .caja-chart-card h4 {
     margin-bottom: 10px;
+    font-size: 0.95rem;
 }
 
 .caja-chart-card small {
+    display: block;
+    margin-top: 6px;
     opacity: 0.7;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+    .caja-modal-body {
+        padding: 14px;
+    }
+
+    .caja-modal-header h2 {
+        font-size: 1rem;
+    }
 }

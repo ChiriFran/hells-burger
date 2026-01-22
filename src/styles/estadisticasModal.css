@@ -27,6 +27,26 @@
     font-weight: 500;
 }
 
+/* SCROLL PERSONALIZADO */
+.stats-modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.stats-modal-body::-webkit-scrollbar-thumb {
+    background: var(--color-rojo);
+    border-radius: 6px;
+}
+
+.stats-modal-body::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Firefox (fallback) */
+.stats-modal-body {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-rojo) transparent;
+}
+
 /* HEADER */
 .stats-modal-header {
     display: flex;

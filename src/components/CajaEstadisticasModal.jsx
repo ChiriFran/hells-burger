@@ -33,62 +33,71 @@ export default function CajaEstadisticasModal({ open, onClose, caja }) {
     return (
         <div className="caja-modal-overlay">
             <div className="caja-modal-container">
-                {/* HEADER */}
+                {/* HEADER (FIJO) */}
                 <header className="caja-modal-header">
                     <h2>💰 Detalle de Caja</h2>
-                    <button onClick={onClose}>✖</button>
+                    <button onClick={onClose} aria-label="Cerrar">
+                        ✖
+                    </button>
                 </header>
 
-                {/* KPIs */}
-                <section className="caja-kpis">
-                    <div className="caja-kpi ingresos">
-                        <span>Ingresos</span>
-                        <strong>${caja.ingresos}</strong>
-                    </div>
+                {/* BODY CON SCROLL */}
+                <div className="caja-modal-body">
+                    {/* KPIs */}
+                    <section className="caja-kpis">
+                        <div className="caja-kpi ingresos">
+                            <span>Ingresos</span>
+                            <strong>${caja.ingresos}</strong>
+                        </div>
 
-                    <div className="caja-kpi gastos">
-                        <span>Gastos</span>
-                        <strong>${caja.gastos}</strong>
-                    </div>
+                        <div className="caja-kpi gastos">
+                            <span>Gastos</span>
+                            <strong>${caja.gastos}</strong>
+                        </div>
 
-                    <div className="caja-kpi cierre">
-                        <span>Cierre</span>
-                        <strong>${cierre}</strong>
-                    </div>
-                </section>
+                        <div className="caja-kpi cierre">
+                            <span>Cierre</span>
+                            <strong>${cierre}</strong>
+                        </div>
+                    </section>
 
-                {/* CHARTS */}
-                <section className="caja-charts">
-                    {/* TORTA */}
-                    <div className="caja-chart-card">
-                        <h4>Ingresos vs Gastos</h4>
-                        <ResponsiveContainer width="100%" height={240}>
-                            <PieChart>
-                                <Pie data={pieData} dataKey="value" outerRadius={90}>
-                                    {pieData.map((_, i) => (
-                                        <Cell key={i} fill={COLORS[i]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip />
-                            </PieChart>
-                        </ResponsiveContainer>
-                        <small>Distribución del dinero del día</small>
-                    </div>
+                    {/* CHARTS */}
+                    <section className="caja-charts">
+                        {/* TORTA */}
+                        <div className="caja-chart-card">
+                            <h4>Ingresos vs Gastos</h4>
 
-                    {/* BARRAS */}
-                    <div className="caja-chart-card">
-                        <h4>Resumen general</h4>
-                        <ResponsiveContainer width="100%" height={240}>
-                            <BarChart data={barData}>
-                                <XAxis dataKey="label" />
-                                <YAxis />
-                                <Tooltip />
-                                <Bar dataKey="monto" />
-                            </BarChart>
-                        </ResponsiveContainer>
-                        <small>Comparación de montos</small>
-                    </div>
-                </section>
+                            <ResponsiveContainer width="100%" height={240}>
+                                <PieChart>
+                                    <Pie data={pieData} dataKey="value" outerRadius={90}>
+                                        {pieData.map((_, i) => (
+                                            <Cell key={i} fill={COLORS[i]} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                </PieChart>
+                            </ResponsiveContainer>
+
+                            <small>Distribución del dinero del día</small>
+                        </div>
+
+                        {/* BARRAS */}
+                        <div className="caja-chart-card">
+                            <h4>Resumen general</h4>
+
+                            <ResponsiveContainer width="100%" height={240}>
+                                <BarChart data={barData}>
+                                    <XAxis dataKey="label" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Bar dataKey="monto" />
+                                </BarChart>
+                            </ResponsiveContainer>
+
+                            <small>Comparación de montos</small>
+                        </div>
+                    </section>
+                </div>
             </div>
         </div>
     );
