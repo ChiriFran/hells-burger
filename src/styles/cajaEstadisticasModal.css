@@ -116,6 +116,48 @@
     opacity: 0.7;
 }
 
+/* LEYENDA HISTÓRICO */
+.caja-legend {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.caja-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+}
+
+.legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+/* colores reales del gráfico */
+.legend-color.ingresos {
+    width: 15px;
+    height: 15px;
+    background-color: #58d05c;
+}
+
+.legend-color.gastos {
+    width: 15px;
+    height: 15px;
+    background-color: #da5f56;
+}
+
+.legend-color.cierre {
+    width: 15px;
+    height: 15px;
+    background-color: #101316;
+}
+
 /* MOBILE */
 @media (max-width: 600px) {
     .caja-modal-body {

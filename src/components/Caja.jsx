@@ -4,7 +4,7 @@ import CajaEstadisticasModal from "./CajaEstadisticasModal";
 import "../styles/caja.css";
 
 export default function Caja() {
-  const { caja, agregarGasto, cerrarCaja } = useCaja();
+  const { caja, cajas, agregarGasto, cerrarCaja } = useCaja();
 
   const [montoGasto, setMontoGasto] = useState("");
   const [openStats, setOpenStats] = useState(false);
@@ -70,6 +70,7 @@ export default function Caja() {
         <button className="btn-cerrar-caja" onClick={cerrarCaja}>
           🔒 Cerrar caja
         </button>
+
         <button
           className="dashboard-stats-open-btn"
           onClick={() => setOpenStats(true)}
@@ -78,11 +79,12 @@ export default function Caja() {
         </button>
       </section>
 
-      {/* MODAL ESTADÍSTICAS */}
+      {/* MODAL */}
       <CajaEstadisticasModal
         open={openStats}
         onClose={() => setOpenStats(false)}
         caja={caja}
+        cajas={cajas}
       />
     </div>
   );
