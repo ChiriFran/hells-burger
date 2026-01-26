@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { db } from "../firebase/config";
 import {
   collection,
@@ -14,24 +14,59 @@ const MesaContext = createContext();
 export const MesaProvider = ({ children }) => {
   const [mesas, setMesas] = useState([]);
   const [pedidos, setPedidos] = useState([]);
+  const [loadingMesas, setLoadingMesas] = useState(true);
 
-  useEffect(() => {
-    const unsubscribeMesas = onSnapshot(collection(db, "mesas"), (snapshot) => {
-      setMesas(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-    });
+  const unsubscribeMesasRef = useRef(null);
+  const unsubscribePedidosRef = useRef(null);
 
-    const unsubscribePedidos = onSnapshot(
-      collection(db, "pedidos"),
+  const subscribeMesas = () => {
+    setLoadingMesas(true);
+
+    // cortar listener anterior si existe
+    if (unsubscribeMesasRef.current) {
+      unsubscribeMesasRef.current();
+    }
+
+    unsubscribeMesasRef.current = onSnapshot(
+      collection(db, "mesas"),
       (snapshot) => {
-        setPedidos(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+        setMesas(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
+        setLoadingMesas(false);
+      },
+      (error) => {
+        console.error("Error snapshot mesas:", error);
+        setLoadingMesas(false);
       }
     );
+  };
+
+  const subscribePedidos = () => {
+    if (unsubscribePedidosRef.current) {
+      unsubscribePedidosRef.current();
+    }
+
+    unsubscribePedidosRef.current = onSnapshot(
+      collection(db, "pedidos"),
+      (snapshot) => {
+        setPedidos(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
+      }
+    );
+  };
+
+  useEffect(() => {
+    subscribeMesas();
+    subscribePedidos();
 
     return () => {
-      unsubscribeMesas();
-      unsubscribePedidos();
+      unsubscribeMesasRef.current?.();
+      unsubscribePedidosRef.current?.();
     };
   }, []);
+
+  // 🔄 para botón "Sincronizar"
+  const refetchMesas = () => {
+    subscribeMesas();
+  };
 
   const actualizarMesa = async (mesaId, data) => {
     await updateDoc(doc(db, "mesas", mesaId), data);
@@ -55,7 +90,15 @@ export const MesaProvider = ({ children }) => {
 
   return (
     <MesaContext.Provider
-      value={{ mesas, pedidos, actualizarMesa, agregarPedido, borrarMesa }}
+      value={{
+        mesas,
+        pedidos,
+        loadingMesas,
+        refetchMesas,
+        actualizarMesa,
+        agregarPedido,
+        borrarMesa,
+      }}
     >
       {children}
     </MesaContext.Provider>
