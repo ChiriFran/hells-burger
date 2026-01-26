@@ -60,11 +60,12 @@ export default function PedidosLista() {
             {pedidosVisibles.map((pedido) => (
               <li key={pedido.id} className="pedido-card">
                 <div className="pedido-header">
-                  <span className="pedido-mesa">
-                    {pedido.mesaNombre || "Mesa"} — ID: {pedido.mesaId}
-                  </span>
-                  <span className="pedido-estado">
-                    {pedido.estado === "pagado" ? "✅" : "❌"} {pedido.estado}
+                  <div className="pedido-mesa">
+                    🍽 Mesa {pedido.mesaNombre || pedido.mesaId}
+                  </div>
+
+                  <span className={`pedido-estado ${pedido.estado}`}>
+                    {pedido.estado}
                   </span>
                 </div>
 
@@ -88,7 +89,7 @@ export default function PedidosLista() {
                   className="eliminar-pedido-btn"
                   onClick={() => eliminarPedido(pedido.id)}
                 >
-                  🗑 Eliminar pedido
+                 ¿Algun problema? 🗑 Eliminar pedido
                 </button>
               </li>
             ))}
