@@ -14,6 +14,7 @@ export const usePedidos = () => {
   const { actualizarMesa } = useMesasContext();
   const [loading, setLoading] = useState(false);
 
+  // 📝 Crear pedido
   const crearPedido = async ({ mesaId, mesaNombre, productos }) => {
     setLoading(true);
     try {
@@ -24,7 +25,7 @@ export const usePedidos = () => {
 
       const pedido = {
         mesaId,
-        mesaNombre, // 👈 ahora se guarda
+        mesaNombre,
         productos,
         total,
         estado: "pendiente",
@@ -48,14 +49,47 @@ export const usePedidos = () => {
     }
   };
 
+  // ➕ Agregar productos a pedido existente
+  const agregarProductosAlPedido = async (pedidoId, nuevosProductos) => {
+    setLoading(true);
+    try {
+      const pedidoRef = doc(db, "pedidos", pedidoId);
+      const snap = await getDoc(pedidoRef);
+      if (!snap.exists()) return;
+
+      const pedido = snap.data();
+
+      const productosActualizados = [
+        ...(pedido.productos || []),
+        ...nuevosProductos,
+      ];
+
+      const totalActualizado = productosActualizados.reduce(
+        (acc, p) => acc + p.precio * p.cantidad,
+        0
+      );
+
+      await updateDoc(pedidoRef, {
+        productos: productosActualizados,
+        total: totalActualizado,
+      });
+
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
+  };
+
+  // ✅ Cerrar pedido
   const cerrarPedido = async (pedidoId, medioPago) => {
     setLoading(true);
     try {
       const pedidoRef = doc(db, "pedidos", pedidoId);
-      const pedidoSnap = await getDoc(pedidoRef);
-      if (!pedidoSnap.exists()) return;
+      const snap = await getDoc(pedidoRef);
+      if (!snap.exists()) return;
 
-      const pedido = pedidoSnap.data();
+      const pedido = snap.data();
 
       await updateDoc(pedidoRef, {
         estado: "pagado",
@@ -73,10 +107,15 @@ export const usePedidos = () => {
       const cajaSnap = await getDoc(cajaRef);
 
       if (cajaSnap.exists()) {
-        const caja = cajaSnap.data();
-        await updateDoc(cajaRef, { ingresos: caja.ingresos + pedido.total });
+        await updateDoc(cajaRef, {
+          ingresos: cajaSnap.data().ingresos + pedido.total,
+        });
       } else {
-        await setDoc(cajaRef, { ingresos: pedido.total, gastos: 0, cierre: 0 });
+        await setDoc(cajaRef, {
+          ingresos: pedido.total,
+          gastos: 0,
+          cierre: 0,
+        });
       }
 
       setLoading(false);
@@ -86,6 +125,7 @@ export const usePedidos = () => {
     }
   };
 
+  // 🔍 Obtener pedido
   const obtenerPedidoPorId = async (pedidoId) => {
     try {
       const ref = doc(db, "pedidos", pedidoId);
@@ -98,5 +138,11 @@ export const usePedidos = () => {
     }
   };
 
-  return { crearPedido, cerrarPedido, obtenerPedidoPorId, loading };
+  return {
+    crearPedido,
+    agregarProductosAlPedido,
+    cerrarPedido,
+    obtenerPedidoPorId,
+    loading,
+  };
 };
