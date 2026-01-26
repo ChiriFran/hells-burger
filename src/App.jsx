@@ -11,6 +11,7 @@ import PedidoModal from "./components/PedidoModal";
 import PedidosLista from "./components/PedidosLista";
 import LogoutButton from "./components/LogoutButton";
 import DescargasFirebase from "./components/DescargasFirebase";
+import ModuloProductos from "./components/ModuloProductos";
 
 import { useMesasContext } from "./context/MesaContext";
 import "./App.css"; // Tus estilos principales
@@ -56,6 +57,7 @@ export default function App() {
         <h1 className="app-title">Hells Admin</h1>
         <MesasBoard setMesaSeleccionada={setMesaSeleccionada} />
         <CrearMesa />
+        <ModuloProductos />
         <PedidosLista />
       </div>
 

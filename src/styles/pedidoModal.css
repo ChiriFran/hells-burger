@@ -206,6 +206,7 @@
   color: #fecaca;
   border: none;
   padding: 12px;
+  margin: 10px 0;
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
@@ -245,4 +246,39 @@
 button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.filtros-productos {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.filtros-productos input,
+.filtros-productos select {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #111;
+  border: 1px solid #333;
+  color: #fff;
+  font-size: 13px;
+}
+
+/* placeholder */
+.filtros-productos input::placeholder {
+  color: #777;
+}
+
+/* focus simple */
+.filtros-productos input:focus,
+.filtros-productos select:focus {
+  outline: none;
+  border-color: #555;
+  background: #0f0f0f;
+}
+
+/* select */
+.filtros-productos select {
+  cursor: pointer;
 }
