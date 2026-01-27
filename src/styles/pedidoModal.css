@@ -170,7 +170,7 @@
 .pedido-form button {
   width: 100%;
   padding: 10px;
-  background: #b63925;
+  background: var(--color-rojo);
   border: none;
   border-radius: 8px;
   color: #fff;
@@ -202,7 +202,7 @@
 }
 
 .btn-secundario {
-  background: #7f1d1d;
+  background: var(--color-rojo);
   color: #fecaca;
   border: none;
   padding: 12px;
@@ -210,6 +210,10 @@
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
+}
+
+.btn-secundario:hover {
+  background: #d44a32;
 }
 
 .btn-cancelar {
