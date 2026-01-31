@@ -6,7 +6,6 @@ import {
   doc,
   updateDoc,
   addDoc,
-  deleteDoc,
 } from "firebase/firestore";
 
 const MesaContext = createContext();
@@ -21,12 +20,7 @@ export const MesaProvider = ({ children }) => {
 
   const subscribeMesas = () => {
     setLoadingMesas(true);
-
-    // cortar listener anterior si existe
-    if (unsubscribeMesasRef.current) {
-      unsubscribeMesasRef.current();
-    }
-
+    unsubscribeMesasRef.current?.();
     unsubscribeMesasRef.current = onSnapshot(
       collection(db, "mesas"),
       (snapshot) => {
@@ -36,56 +30,79 @@ export const MesaProvider = ({ children }) => {
       (error) => {
         console.error("Error snapshot mesas:", error);
         setLoadingMesas(false);
-      }
+      },
     );
   };
 
   const subscribePedidos = () => {
-    if (unsubscribePedidosRef.current) {
-      unsubscribePedidosRef.current();
-    }
-
+    unsubscribePedidosRef.current?.();
     unsubscribePedidosRef.current = onSnapshot(
       collection(db, "pedidos"),
       (snapshot) => {
         setPedidos(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
-      }
+      },
     );
   };
 
   useEffect(() => {
     subscribeMesas();
     subscribePedidos();
-
     return () => {
       unsubscribeMesasRef.current?.();
       unsubscribePedidosRef.current?.();
     };
   }, []);
 
-  // 🔄 para botón "Sincronizar"
-  const refetchMesas = () => {
-    subscribeMesas();
-  };
+  // Crear mesa
+  const crearMesaPublica = async (nombreMesa) => {
+    // 🔹 Obtener último número de las mesas existentes
+    const ultimoNumero = mesas.length
+      ? Math.max(...mesas.map((m) => m.numero || 0))
+      : 0;
+    const nuevoNumero = ultimoNumero + 1;
 
-  const actualizarMesa = async (mesaId, data) => {
-    await updateDoc(doc(db, "mesas", mesaId), data);
-  };
-
-  const agregarPedido = async (pedidoData) => {
-    const ref = await addDoc(collection(db, "pedidos"), pedidoData);
-    await actualizarMesa(pedidoData.mesaId, {
+    // 🔹 Crear la mesa
+    const mesaRef = await addDoc(collection(db, "mesas"), {
+      nombre: nombreMesa,
       estado: "ocupada",
-      pedidoActual: ref.id,
+      createdAt: new Date(),
+      pedidoActual: null,
+      numero: nuevoNumero,
     });
-    return ref.id;
+
+    return { id: mesaRef.id, nombre: nombreMesa, numero: nuevoNumero };
   };
 
-  const borrarMesa = async (mesa) => {
-    if (mesa.estado === "ocupada" || mesa.pedidoActual) {
-      throw new Error("No se puede borrar una mesa ocupada");
-    }
-    await deleteDoc(doc(db, "mesas", mesa.id));
+  // Crear pedido y vincular con la mesa
+  const agregarPedidoPublico = async (mesa, items) => {
+    const horaInicio = new Date();
+    const horaStr = horaInicio.toLocaleTimeString();
+
+    const productos = items.map((i) => ({
+      nombre: i.titulo,
+      precio: Number(i.precio),
+      cantidad: Number(i.qty),
+      subtotal: Number(i.precio) * Number(i.qty),
+      hora: horaStr,
+    }));
+
+    const pedidoRef = await addDoc(collection(db, "pedidos"), {
+      estado: "pendiente",
+      horaInicio,
+      horaCierre: null,
+      medioPago: null,
+      mesaId: mesa.id,
+      mesaNombre: mesa.nombre,
+      productos,
+      total: productos.reduce((acc, p) => acc + p.subtotal, 0),
+    });
+
+    // 🔹 Actualizar la mesa con el id del pedido
+    await updateDoc(doc(db, "mesas", mesa.id), {
+      pedidoActual: pedidoRef.id,
+    });
+
+    return { ...mesa, pedidoId: pedidoRef.id };
   };
 
   return (
@@ -94,10 +111,8 @@ export const MesaProvider = ({ children }) => {
         mesas,
         pedidos,
         loadingMesas,
-        refetchMesas,
-        actualizarMesa,
-        agregarPedido,
-        borrarMesa,
+        crearMesaPublica,
+        agregarPedidoPublico,
       }}
     >
       {children}

@@ -1,0 +1,445 @@
+/* ==============================
+   PUBLIC CART SIDEBAR
+============================== */
+
+.public-cart {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 360px;
+  height: 100vh;
+  background-color: var(--color-fondo);
+  background-image: url("../../assets/logo/logo-con-diablo.jpeg");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  color: var(--color-letra);
+  transform: translateX(100%);
+  transition: transform 0.35s ease;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  border-left: 7px dashed #2a2a2a;
+}
+
+.public-cart.open {
+  transform: translateX(0);
+}
+
+/* ==============================
+   HEADER
+============================== */
+
+.public-cart-header {
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 4px dashed #2a2a2a;
+  background: rgba(10, 10, 12, 0.85);
+  backdrop-filter: blur(4px);
+}
+
+.public-cart-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.public-cart-header button {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.public-cart-header button:hover {
+  color: #fff;
+}
+
+/* ==============================
+   BODY
+============================== */
+
+.public-cart-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.public-cart-empty {
+  text-align: center;
+  color: #777;
+  margin-top: 40px;
+  font-size: 14px;
+}
+
+/* ==============================
+   CART ITEMS
+============================== */
+
+.public-cart-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  background: var(--color-rojo);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.public-cart-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.public-cart-item strong {
+  font-size: 14px;
+}
+
+.public-cart-item .qty {
+  display: block;
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+}
+
+.public-cart-item .price {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.public-cart-remove-btn {
+  background: none;
+  border: none;
+  color: var(--color-letra);
+  cursor: pointer;
+  font-size: 22px;
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.public-cart-remove-btn:hover {
+  transform: scale(1.1);
+  opacity: 0.9;
+}
+
+/* ==============================
+   EXTRAS
+============================== */
+
+.cart-item-extras {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.extra-chip {
+  background: #0f0f13;
+  border: 1px solid #2a2a2a;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  color: #ccc;
+}
+
+/* ==============================
+   CHECKOUT
+============================== */
+
+.checkout-box {
+  display: flex;
+  justify-content: center;
+}
+
+.checkout-card {
+  width: 100%;
+  background: #16161b;
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  border: 1px solid #222;
+}
+
+.checkout-card h4 {
+  margin-bottom: 14px;
+  font-size: 15px;
+}
+
+.checkout-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.alias {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.checkout-note {
+  font-size: 13px;
+  color: #aaa;
+  margin: 14px 0;
+}
+
+.checkout-wsp-btn {
+  display: block;
+  margin-top: 12px;
+  padding: 12px;
+  background: #25d366;
+  color: #000;
+  border-radius: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.checkout-wsp-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.35);
+}
+
+.checkout-id {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #777;
+}
+
+/* ==============================
+   FOOTER (UX ZONE)
+============================== */
+
+.public-cart-footer {
+  padding: 16px;
+  background: var(--color-fondo);
+  border-top: 4px dashed #2a2a2a;
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ==============================
+   INPUT MESA
+============================== */
+
+.mesa-nombre-input {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--color-fondo);
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid #222;
+}
+
+.mesa-nombre-input label {
+  font-size: 13px;
+  color: #aaa;
+}
+
+.mesa-nombre-input input {
+  background: var(--color-fondo);
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: var(--color-letra);
+  font-size: 14px;
+}
+
+.mesa-nombre-input input::placeholder {
+  color: #666;
+}
+
+.mesa-nombre-input input:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+/* ==============================
+   TOTAL
+============================== */
+
+.public-cart-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  color: #ccc;
+}
+
+.public-cart-total strong {
+  font-size: 20px;
+  font-weight: 700;
+  color: #22c55e;
+}
+
+/* ==============================
+   CTA BUTTONS
+============================== */
+
+.public-cart-checkout-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 16px;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  color: #000;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s;
+}
+
+.public-cart-checkout-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(34, 197, 94, 0.35);
+}
+
+.public-cart-checkout-btn:active {
+  transform: translateY(0);
+}
+
+.public-cart-checkout-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.public-cart-close-btn {
+  width: 100%;
+  padding: 13px;
+  border-radius: 14px;
+  background: #1f1f24;
+  border: 1px solid #2a2a2a;
+  color: #ddd;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.public-cart-close-btn:hover {
+  background: #2a2a30;
+}
+
+/* ==============================
+   ENTREGA SELECTOR
+============================== */
+
+.entrega-selector {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.entrega-selector button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #2a2a2a;
+  background: #16161b;
+  color: #ccc;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.entrega-selector button.active {
+  background: #22c55e;
+  color: #000;
+  border-color: #22c55e;
+}
+
+.entrega-selector button:hover:not(.active) {
+  background: #1f1f24;
+}
+
+/* ==============================
+   ENVIO FORM
+============================== */
+
+.envio-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #16161b;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid #222;
+  margin-bottom: 10px;
+}
+
+.envio-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #aaa;
+}
+
+.envio-form input {
+  background: #0f0f13;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 9px 12px;
+  color: #fff;
+}
+
+.envio-form input:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+/* ==============================
+   COMENTARIOS
+============================== */
+
+.comentarios-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #16161b;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid #222;
+}
+
+.comentarios-box label {
+  font-size: 13px;
+  color: #aaa;
+}
+
+.comentarios-box textarea {
+  resize: none;
+  background: #0f0f13;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: #fff;
+  font-size: 13px;
+}
+
+.comentarios-box textarea::placeholder {
+  color: #666;
+}
+
+.comentarios-box textarea:focus {
+  outline: none;
+  border-color: #22c55e;
+}
