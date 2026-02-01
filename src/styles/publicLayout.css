@@ -6,8 +6,7 @@
 }
 
 .public-header {
-  position: sticky;
-  top: 0;
+
   z-index: 20;
   background: var(--color-negro);
   color: white;
@@ -24,7 +23,6 @@
 }
 
 .public-cart-btn {
-  position: relative;
   background: none;
   border: none;
   font-size: 22px;
