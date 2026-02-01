@@ -66,7 +66,7 @@ export default function PublicProductosModal({ product, onClose, onAdd }) {
           <img
             src={
               product.imagen ||
-              "https://i.postimg.cc/jSXMXrPy/burger.jpg"
+              "https://i.postimg.cc/HkswT88n/burger.jpg"
             }
             alt={product.titulo}
           />
