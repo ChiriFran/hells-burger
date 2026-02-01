@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/config";
 
-import "../styles/PublicProductos.css";
+import "../styles/publicProductos.css";
 import { usePublicCart } from "../context/PublicCartContext";
 
 import PublicProductosModal from "./PublicProductosModal";
