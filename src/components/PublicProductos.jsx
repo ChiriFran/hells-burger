@@ -107,7 +107,7 @@ export default function PublicProductos() {
                     <img
                       src={
                         item.imagen ||
-                        "https://i.postimg.cc/j2VVh0Bf/imagen-de-producto.png"
+                        "https://i.postimg.cc/jSXMXrPy/burger.jpg"
                       }
                       alt={item.titulo}
                     />
