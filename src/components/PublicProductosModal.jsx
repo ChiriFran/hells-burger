@@ -118,7 +118,7 @@ export default function PublicProductosModal({ product, onClose, onAdd }) {
                 }`}
                 onClick={() => setVersion("simple")}
               >
-                <p className="extra-title">Simple</p>
+                <p className="extra-title">Simple 🍔</p>
                 <span className="extra-price">
                   ${Number(product.precio) || 0}
                 </span>
@@ -130,7 +130,7 @@ export default function PublicProductosModal({ product, onClose, onAdd }) {
                 }`}
                 onClick={() => setVersion("doble")}
               >
-                <p className="extra-title">Doble 🥩🥩</p>
+                <p className="extra-title">Doble 🥩</p>
                 <span className="extra-price">
                   ${Number(product.precioDoble) || 0}
                 </span>
@@ -185,7 +185,7 @@ export default function PublicProductosModal({ product, onClose, onAdd }) {
           <div className="product-modal-comment">
             <label>Comentarios para este producto</label>
             <textarea
-              placeholder="Ej: sin cebolla, bien cocida..."
+              placeholder="Ej: sin cebolla, sin sal, sin condimento..."
               value={comentarioProducto}
               onChange={(e) => setComentarioProducto(e.target.value)}
               maxLength={120}
