@@ -15,6 +15,7 @@ export default function PublicProductos() {
 
   const { addItem, setOpen } = usePublicCart();
 
+  /* ================== FETCH PRODUCTOS ================== */
   useEffect(() => {
     const fetchMenu = async () => {
       const snap = await getDocs(collection(db, "productos"));
@@ -23,9 +24,10 @@ export default function PublicProductos() {
       snap.docs.forEach((doc) => {
         const {
           titulo,
-          subtitulo, // ✅ AHORA SÍ
+          subtitulo,
           categoria,
           precio,
+          precioDoble, // ✅ MUY IMPORTANTE
           imagen,
         } = doc.data();
 
@@ -34,8 +36,9 @@ export default function PublicProductos() {
         grouped[categoria].push({
           id: doc.id,
           titulo,
-          subtitulo: subtitulo || "", // ✅ SEGURIDAD
-          precio,
+          subtitulo: subtitulo || "",
+          precio: Number(precio) || 0,
+          precioDoble: Number(precioDoble) || 0, // ✅ PASA BIEN
           imagen,
         });
       });
@@ -47,21 +50,27 @@ export default function PublicProductos() {
     fetchMenu();
   }, []);
 
+  /* ================== HANDLERS ================== */
+  const handleOpenModal = (product) => {
+    setSelectedProduct(product);
+  };
+
   const handleAddToCart = (item) => {
     addItem(item);
     setOpen(true);
     setSelectedProduct(null);
   };
 
+  /* ================== LOADING ================== */
   if (menuLoading) {
     return <div className="public-menu-loading">Cargando menú…</div>;
   }
 
+  /* ================== FILTROS ================== */
   const filteredCategories = selectedCategory
     ? { [selectedCategory]: menuData[selectedCategory] }
     : menuData;
 
-  // Ordenar categorías
   const categoryOrder = Object.keys(filteredCategories).sort((a, b) => {
     if (a.toLowerCase().includes("hamburguesa")) return -1;
     if (b.toLowerCase().includes("hamburguesa")) return 1;
@@ -70,12 +79,13 @@ export default function PublicProductos() {
     return 0;
   });
 
+  /* ================== RENDER ================== */
   return (
     <>
       <section className="public-menu-container">
         <h2 className="public-menu-title">Menú</h2>
 
-        {/* Categorías */}
+        {/* CATEGORÍAS */}
         <div className="public-menu-categories-buttons">
           <button
             className="public-menu-category-btn"
@@ -95,14 +105,18 @@ export default function PublicProductos() {
           ))}
         </div>
 
-        {/* Productos */}
+        {/* PRODUCTOS */}
         {categoryOrder.map((categoria) => (
           <article key={categoria} className="public-menu-category">
             <h3 className="public-menu-category-title">{categoria}</h3>
 
             <ul className="public-menu-list">
               {filteredCategories[categoria].map((item) => (
-                <li key={item.id} className="public-menu-item">
+                <li
+                  key={item.id}
+                  className="public-menu-item"
+                  onClick={() => handleOpenModal(item)}
+                >
                   <div className="public-menu-item-img">
                     <img
                       src={
@@ -110,6 +124,7 @@ export default function PublicProductos() {
                         "https://i.postimg.cc/HkswT88n/burger.jpg"
                       }
                       alt={item.titulo}
+                      loading="lazy"
                     />
                   </div>
 
@@ -131,7 +146,11 @@ export default function PublicProductos() {
 
                   <button
                     className="public-menu-item-add"
-                    onClick={() => setSelectedProduct(item)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleOpenModal(item);
+                    }}
+                    aria-label={`Agregar ${item.titulo}`}
                   >
                     +
                   </button>
@@ -142,7 +161,7 @@ export default function PublicProductos() {
         ))}
       </section>
 
-      {/* Modal */}
+      {/* MODAL */}
       {selectedProduct && (
         <PublicProductosModal
           product={selectedProduct}

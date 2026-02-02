@@ -272,3 +272,33 @@
 .product-modal-comment textarea:focus {
   border-color: var(--color-rojo);
 }
+
+/* ===== SALIDA ANIMADA ===== */
+
+.product-modal-overlay.closing {
+  animation: fadeOut 0.25s ease forwards;
+}
+
+.product-modal-content.closing {
+  animation: slideOut 0.3s ease forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+}
