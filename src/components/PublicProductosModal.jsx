@@ -5,11 +5,14 @@ export default function PublicProductosModal({ product, onClose, onAdd }) {
   const EXTRA_PRICE = 2000;
 
   const [extras, setExtras] = useState({
-    carne: false,
+    carne: 0,
     cheddar: false,
     papas: false,
   });
 
+  const [comentarioProducto, setComentarioProducto] = useState("");
+
+  /* cerrar con ESC */
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") onClose();
@@ -20,35 +23,52 @@ export default function PublicProductosModal({ product, onClose, onAdd }) {
 
   if (!product) return null;
 
-  const extrasSeleccionados = [];
-  let extrasLabel = "";
-
-  if (extras.carne) extrasSeleccionados.push("Carne extra");
-  if (extras.cheddar) extrasSeleccionados.push("Cheddar");
-  if (extras.papas) extrasSeleccionados.push("Papas con bacon");
-
-  if (extrasSeleccionados.length > 0) {
-    extrasLabel = ` (+ ${extrasSeleccionados.join(", ")})`;
-  }
-
-  const extrasTotal = extrasSeleccionados.length * EXTRA_PRICE;
-  const precioFinal = product.precio + extrasTotal;
-
+  /* handlers */
   const toggleExtra = (key) => {
     setExtras((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
+  const addCarne = () => {
+    setExtras((prev) => ({
+      ...prev,
+      carne: prev.carne + 1,
+    }));
+  };
+
+  const removeCarne = () => {
+    setExtras((prev) => ({
+      ...prev,
+      carne: prev.carne > 0 ? prev.carne - 1 : 0,
+    }));
+  };
+
+  /* extras seleccionados */
+  const extrasSeleccionados = [];
+
+  if (extras.carne > 0)
+    extrasSeleccionados.push(`Carne extra x${extras.carne}`);
+  if (extras.cheddar) extrasSeleccionados.push("Cheddar");
+  if (extras.papas) extrasSeleccionados.push("Papas con bacon");
+
+  const extrasLabel =
+    extrasSeleccionados.length > 0
+      ? ` (+ ${extrasSeleccionados.join(", ")})`
+      : "";
+
+  const extrasTotal =
+    extras.carne * EXTRA_PRICE +
+    (extras.cheddar ? EXTRA_PRICE : 0) +
+    (extras.papas ? EXTRA_PRICE : 0);
+
+  const precioFinal = product.precio + extrasTotal;
+
   const handleAdd = () => {
     onAdd({
       ...product,
-
-      // ⬅️ IMPORTANTE: el nombre ya incluye los extras
       titulo: product.titulo + extrasLabel,
-
-      // precio final ya cerrado
       precio: precioFinal,
+      comentarioProducto: comentarioProducto.trim(), // 👈 CLAVE
     });
-
     onClose();
   };
 
@@ -64,10 +84,7 @@ export default function PublicProductosModal({ product, onClose, onAdd }) {
 
         <div className="product-modal-img">
           <img
-            src={
-              product.imagen ||
-              "https://i.postimg.cc/HkswT88n/burger.jpg"
-            }
+            src={product.imagen || "https://i.postimg.cc/HkswT88n/burger.jpg"}
             alt={product.titulo}
           />
         </div>
@@ -75,7 +92,7 @@ export default function PublicProductosModal({ product, onClose, onAdd }) {
         <div className="product-modal-info">
           <h2>{product.titulo}</h2>
 
-          <p className="product-modal-price">{product.subtitulo}</p>
+          <p className="product-modal-subtitle">{product.subtitulo}</p>
 
           <p className="product-modal-price">
             ${precioFinal}
@@ -84,35 +101,59 @@ export default function PublicProductosModal({ product, onClose, onAdd }) {
             )}
           </p>
 
-          <div className="product-modal-options">
+          {/* EXTRAS */}
+          <div className="product-modal-options compact">
             <h4>Extras</h4>
 
-            <label>
-              <input
-                type="checkbox"
-                checked={extras.carne}
-                onChange={() => toggleExtra("carne")}
-              />
-              Carne extra (+$2000)
-            </label>
+            {/* Carne */}
+            <div className="extra-item small">
+              <div>
+                <p className="extra-title">Carne extra 🥩</p>
+                <span className="extra-desc">Sumá más carne</span>
+                <span className="extra-price"> +$2000</span>
+              </div>
 
-            <label>
-              <input
-                type="checkbox"
-                checked={extras.cheddar}
-                onChange={() => toggleExtra("cheddar")}
-              />
-              Cheddar (+$2000)
-            </label>
+              <div className="extra-qty">
+                <button onClick={removeCarne} disabled={extras.carne === 0}>
+                  −
+                </button>
+                <span>{extras.carne}</span>
+                <button onClick={addCarne}>+</button>
+              </div>
+            </div>
 
-            <label>
-              <input
-                type="checkbox"
-                checked={extras.papas}
-                onChange={() => toggleExtra("papas")}
-              />
-              Papas con bacon (+$2000)
-            </label>
+            <div className="extra-row">
+              <div
+                className={`extra-item small half ${
+                  extras.cheddar ? "active" : ""
+                }`}
+                onClick={() => toggleExtra("cheddar")}
+              >
+                <p className="extra-title">Papas con Cheddar 🧀</p>
+                <span className="extra-price">+$2000</span>
+              </div>
+
+              <div
+                className={`extra-item small half ${
+                  extras.papas ? "active" : ""
+                }`}
+                onClick={() => toggleExtra("papas")}
+              >
+                <p className="extra-title">Papas con Bacon 🥓</p>
+                <span className="extra-price">+$2000</span>
+              </div>
+            </div>
+          </div>
+
+          {/* COMENTARIOS */}
+          <div className="product-modal-comment">
+            <label>Comentarios para este producto</label>
+            <textarea
+              placeholder="Ej: sin cebolla, bien cocida..."
+              value={comentarioProducto}
+              onChange={(e) => setComentarioProducto(e.target.value)}
+              maxLength={120}
+            />
           </div>
 
           <button className="product-modal-add" onClick={handleAdd}>
