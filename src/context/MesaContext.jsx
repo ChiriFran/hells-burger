@@ -19,7 +19,10 @@ export const MesaProvider = ({ children }) => {
   const unsubscribeMesasRef = useRef(null);
   const unsubscribePedidosRef = useRef(null);
 
-  // 🔄 Suscripción a mesas
+  /* =========================
+     🔄 SUSCRIPCIONES
+  ========================= */
+
   const subscribeMesas = () => {
     setLoadingMesas(true);
     unsubscribeMesasRef.current?.();
@@ -37,7 +40,6 @@ export const MesaProvider = ({ children }) => {
     );
   };
 
-  // 🔄 Suscripción a pedidos
   const subscribePedidos = () => {
     unsubscribePedidosRef.current?.();
 
@@ -45,6 +47,9 @@ export const MesaProvider = ({ children }) => {
       collection(db, "pedidos"),
       (snapshot) => {
         setPedidos(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
+      },
+      (error) => {
+        console.error("Error snapshot pedidos:", error);
       },
     );
   };
@@ -59,7 +64,10 @@ export const MesaProvider = ({ children }) => {
     };
   }, []);
 
-  // ➕ Crear mesa
+  /* =========================
+     ➕ CREAR MESA
+  ========================= */
+
   const crearMesaPublica = async (nombreMesa) => {
     const ultimoNumero = mesas.length
       ? Math.max(...mesas.map((m) => m.numero || 0))
@@ -70,15 +78,32 @@ export const MesaProvider = ({ children }) => {
     const mesaRef = await addDoc(collection(db, "mesas"), {
       nombre: nombreMesa,
       estado: "libre",
-      createdAt: new Date(),
       pedidoActual: null,
       numero: nuevoNumero,
+      createdAt: new Date(),
     });
 
-    return { id: mesaRef.id, nombre: nombreMesa, numero: nuevoNumero };
+    return {
+      id: mesaRef.id,
+      nombre: nombreMesa,
+      numero: nuevoNumero,
+      estado: "libre",
+      pedidoActual: null,
+    };
   };
 
-  // ➕ Crear pedido y vincular mesa
+  /* =========================
+     ✏️ ACTUALIZAR MESA (CLAVE)
+  ========================= */
+
+  const actualizarMesa = async (mesaId, data) => {
+    await updateDoc(doc(db, "mesas", mesaId), data);
+  };
+
+  /* =========================
+     ➕ CREAR PEDIDO DESDE MESA
+  ========================= */
+
   const agregarPedidoPublico = async (mesa, items) => {
     const horaInicio = new Date();
     const horaStr = horaInicio.toLocaleTimeString();
@@ -102,15 +127,18 @@ export const MesaProvider = ({ children }) => {
       total: productos.reduce((acc, p) => acc + p.subtotal, 0),
     });
 
-    await updateDoc(doc(db, "mesas", mesa.id), {
-      pedidoActual: pedidoRef.id,
+    await actualizarMesa(mesa.id, {
       estado: "ocupada",
+      pedidoActual: pedidoRef.id,
     });
 
-    return { ...mesa, pedidoId: pedidoRef.id };
+    return pedidoRef.id;
   };
 
-  // ❌ Borrar mesa (solo si está libre)
+  /* =========================
+     ❌ BORRAR MESA
+  ========================= */
+
   const borrarMesa = async (mesa) => {
     if (mesa.estado !== "libre" || mesa.pedidoActual) {
       throw new Error("No se puede borrar una mesa ocupada");
@@ -118,6 +146,10 @@ export const MesaProvider = ({ children }) => {
 
     await deleteDoc(doc(db, "mesas", mesa.id));
   };
+
+  /* =========================
+     PROVIDER
+  ========================= */
 
   return (
     <MesaContext.Provider
@@ -127,6 +159,7 @@ export const MesaProvider = ({ children }) => {
         loadingMesas,
         crearMesaPublica,
         agregarPedidoPublico,
+        actualizarMesa, // 👈 AHORA EXISTE
         borrarMesa,
       }}
     >
