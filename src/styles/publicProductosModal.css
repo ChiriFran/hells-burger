@@ -73,7 +73,6 @@
   font-weight: 600;
   font-style: italic;
   color: rgb(133, 124, 124);
-  padding: 0 5px;
 }
 
 .product-modal-price {
@@ -162,7 +161,7 @@
   justify-content: space-between;
   align-items: center;
   background-color: #1a1a1a;
-  border: 1px solid #2a2a2a;
+  border: 4px dashed #2a2a2a;
   border-radius: 8px;
   padding: 10px 12px;
   margin-bottom: 8px;
@@ -259,7 +258,7 @@
   padding: 8px 10px;
   border-radius: 8px;
   background-color: #1a1a1a;
-  border: 1px solid #2a2a2a;
+  border: 4px dashed #2a2a2a;
   color: #fff;
   font-size: 13px;
   outline: none;
