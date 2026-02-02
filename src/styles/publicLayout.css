@@ -32,20 +32,24 @@
 }
 
 .public-admin-access-btn {
+  position: fixed;
+  bottom: 14px;
+  right: 14px;
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 14px;
-  background-color: #111111;
+  padding: 8px 12px;
+  background: #111;
   color: var(--color-letra);
   border: 4px dashed rgba(128, 128, 128, 0.192);
+  border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
   transition: 0.2s;
 }
 
 .public-admin-access-btn:hover {
-  filter: brightness(1);
+  opacity: 1;
 }
 
 .public-cart-btn {

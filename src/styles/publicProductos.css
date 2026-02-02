@@ -103,7 +103,7 @@
   height: 250px;
   border-radius: 10px;
   overflow: hidden;
-  border: 4px dashed  rgba(128, 128, 128, 0.192);
+  border: 4px dashed #2a2a2a;
 }
 
 .public-menu-item-img img {
