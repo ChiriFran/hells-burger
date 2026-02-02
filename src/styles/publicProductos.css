@@ -35,10 +35,10 @@
 }
 
 .public-menu-category-btn {
-  padding: 6px 10px;
+  padding: 6px 12px;
   background-color: #111111;
   border: 4px dashed #2a2a2a;
-  border-radius: 20px;
+  border-radius: 12px;
   color: var(--color-letra);
   font-size: 13px;
   text-transform: uppercase;
@@ -103,7 +103,7 @@
   height: 250px;
   border-radius: 10px;
   overflow: hidden;
-  border: 1px solid #2a2a2a;
+  border: 4px dashed  rgba(128, 128, 128, 0.192);
 }
 
 .public-menu-item-img img {
