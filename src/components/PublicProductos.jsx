@@ -85,6 +85,8 @@ export default function PublicProductos() {
       <section className="public-menu-container">
         <h2 className="public-menu-title">Menú</h2>
 
+        <h2 className="public-menu-subtitle">🔥Del infierno a tu mesa🔥</h2>
+
         {/* CATEGORÍAS */}
         <div className="public-menu-categories-buttons">
           <button

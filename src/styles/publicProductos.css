@@ -11,10 +11,18 @@
 /* TITULO */
 .public-menu-title {
   text-align: center;
-  font-size: 26px;
-  margin-bottom: 32px;
+  font-size: 32px;
   letter-spacing: 1px;
   font-weight: 600;
+}
+
+.public-menu-subtitle {
+  text-align: center;
+  font-size: 25px;
+  color: rgba(128, 128, 128, 0.807);
+  margin-bottom: 3rem;
+  font-family: Comic;
+  font-style: italic;
 }
 
 /* BOTONES DE CATEGORÍAS */
@@ -85,7 +93,7 @@
 
 .public-menu-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.393);
 }
 
 /* IMAGEN DEL PRODUCTO */
@@ -128,17 +136,18 @@
 }
 
 .public-menu-item-price {
-  font-size: 22px;
+  font-size: 25px;
   font-weight: 700;
   color: var(--color-rojo);
+  font-family: monospace;
 }
 
 /* BOTÓN AGREGAR */
 .public-menu-item-add {
   background-color: var(--color-rojo);
-  color: #fff;
+  color: var(--color-letra);
   border: none;
-  font-size: 18px;
+  font-size: 22px;
   width: 36px;
   height: 36px;
   border-radius: 50%;
