@@ -133,3 +133,88 @@
     width: 100%;
   }
 }
+
+/* 🧠 Toolbar cocina */
+.pedidos-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.toolbar-btn {
+  padding: 6px 10px;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+.toolbar-btn.limpiar {
+  border: 1px solid #222;
+  background: #000;
+  color: white;
+}
+
+.toolbar-btn.limpiar:hover {
+  background: #555;
+}
+
+.toolbar-select {
+  padding: 6px;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-letra);
+  background: transparent;
+  color: var(--color-letra);
+  font-size: 0.8rem;
+}
+
+.toolbar-count {
+  margin-left: auto;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* Select estilo cocina dark */
+.toolbar-select {
+  padding: 6px 10px;
+  border-radius: 0.5rem;
+  border: 1px solid #222;
+  background: #000;
+  /* fondo negro */
+  color: #fff;
+  /* texto blanco */
+  font-size: 0.8rem;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* Hover */
+.toolbar-select:hover {
+  border-color: #ff0000;
+}
+
+/* Focus (cuando lo abrís) */
+.toolbar-select:focus {
+  border-color: red;
+  box-shadow: 0 0 6px red;
+}
+
+/* Opciones del dropdown */
+.toolbar-select option {
+  background: #000;
+  /* fondo negro */
+  color: #fff;
+  /* texto blanco */
+  font-weight: 500;
+}
+
+/* Opciones seleccionadas */
+.toolbar-select option:checked {
+  background: red;
+  color: white;
+}
