@@ -286,3 +286,110 @@ button:disabled {
 .filtros-productos select {
   cursor: pointer;
 }
+
+/* CONTENEDOR EXTRAS */
+.extras-box {
+  width: 100%;
+  margin-top: 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(4px);
+}
+
+/* TITULO DESPLEGABLE */
+.extras-box summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--color-letra);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.extras-box summary::before {
+  content: "➕";
+  font-size: 11px;
+  transition: 0.2s;
+}
+
+.extras-box[open] summary::before {
+  content: "➖";
+}
+
+/* FILA CARNE EXTRA */
+.extra-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #ddd;
+}
+
+/* BOTONES + - */
+.extra-row button {
+  background: linear-gradient(135deg, #111, #222);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: 0.15s;
+}
+
+.extra-row button:hover {
+  background: var(--color-rojo);
+  color: black;
+  transform: scale(1.1);
+}
+
+/* NUMERO CARNE */
+.extra-row span {
+  min-width: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+/* CHECKBOX EXTRAS */
+.extras-box label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #ccc;
+  margin: 6px 0;
+  cursor: pointer;
+}
+
+.extras-box input[type="checkbox"] {
+  accent-color: var(--color-rojo);
+  transform: scale(1.1);
+}
+
+/* DOBLE SWITCH */
+.doble-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 6px;
+  background: rgba(255, 68, 0, 0.725);
+  padding: 2px 8px;
+  border-radius: 20px;
+  color: var(--color-letra);
+  border: 1px solid var(--color-rojo);
+  width: fit-content;
+}
+
+.doble-switch input {
+  accent-color: var(--color-letra);
+}
