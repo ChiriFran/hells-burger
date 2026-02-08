@@ -6,7 +6,9 @@ export default function ProductosModal({ cerrar }) {
     const { productos, crearProducto, eliminarProducto } = useProductos();
 
     const [titulo, setTitulo] = useState("");
+    const [subtitulo, setSubtitulo] = useState("");
     const [precio, setPrecio] = useState("");
+    const [precioDoble, setPrecioDoble] = useState("");
     const [categoria, setCategoria] = useState("");
     const [busqueda, setBusqueda] = useState("");
 
@@ -15,16 +17,21 @@ export default function ProductosModal({ cerrar }) {
 
         await crearProducto({
             titulo,
-            precio: Number(precio),
+            subtitulo,
             categoria,
+            precio: Number(precio),
+            precioDoble: Number(precioDoble) || 0,
         });
 
+        // limpiar inputs
         setTitulo("");
+        setSubtitulo("");
         setPrecio("");
+        setPrecioDoble("");
         setCategoria("");
     };
 
-    // 🔎 Filtro + orden PRO (producción)
+    // 🔎 Filtro + orden PRO
     const productosOrdenados = useMemo(() => {
         const texto = busqueda.toLowerCase().trim();
 
@@ -33,7 +40,6 @@ export default function ProductosModal({ cerrar }) {
             p.categoria?.toLowerCase().includes(texto)
         );
 
-        // ordenar por categoría y luego por título
         filtrados.sort((a, b) => {
             const catA = (a.categoria || "").toLowerCase();
             const catB = (b.categoria || "").toLowerCase();
@@ -42,7 +48,6 @@ export default function ProductosModal({ cerrar }) {
             return a.titulo.toLowerCase().localeCompare(b.titulo.toLowerCase());
         });
 
-        // agrupar
         return filtrados.reduce((acc, p) => {
             const cat = p.categoria || "Sin categoría";
             if (!acc[cat]) acc[cat] = [];
@@ -73,14 +78,29 @@ export default function ProductosModal({ cerrar }) {
                                 value={titulo}
                                 onChange={(e) => setTitulo(e.target.value)}
                             />
+
+                            <input
+                                placeholder="Subtítulo (ej: Irresistible, probala!)"
+                                value={subtitulo}
+                                onChange={(e) => setSubtitulo(e.target.value)}
+                            />
+
                             <input
                                 type="number"
-                                placeholder="Precio"
+                                placeholder="Precio simple"
                                 value={precio}
                                 onChange={(e) => setPrecio(e.target.value)}
                             />
+
                             <input
-                                placeholder="Categoría"
+                                type="number"
+                                placeholder="Precio doble (opcional)"
+                                value={precioDoble}
+                                onChange={(e) => setPrecioDoble(e.target.value)}
+                            />
+
+                            <input
+                                placeholder="Categoría (hamburguesas, papas, bebidas...)"
                                 value={categoria}
                                 onChange={(e) => setCategoria(e.target.value)}
                             />
@@ -106,40 +126,38 @@ export default function ProductosModal({ cerrar }) {
                             <p className="productos-vacio">No se encontraron productos</p>
                         )}
 
-                        {Object.entries(productosOrdenados).map(
-                            ([categoria, items]) => (
-                                <div key={categoria} className="categoria-bloque">
+                        {Object.entries(productosOrdenados).map(([categoria, items]) => (
+                            <div key={categoria} className="categoria-bloque">
 
-                                    <h5 className="categoria-titulo">
-                                        {categoria}
-                                        <span className="categoria-count">
-                                            ({items.length})
-                                        </span>
-                                    </h5>
+                                <h5 className="categoria-titulo">
+                                    {categoria}
+                                    <span className="categoria-count">({items.length})</span>
+                                </h5>
 
-                                    <ul className="productos-lista">
-                                        {items.map((p) => (
-                                            <li key={p.id} className="producto-item">
-                                                <div className="producto-info">
-                                                    <strong>{p.titulo}</strong>
-                                                    <span className="producto-precio">
-                                                        ${p.precio}
-                                                    </span>
-                                                </div>
+                                <ul className="productos-lista">
+                                    {items.map((p) => (
+                                        <li key={p.id} className="producto-item">
+                                            <div className="producto-info">
+                                                <strong>{p.titulo}</strong>
+                                                {p.subtitulo && <small>{p.subtitulo}</small>}
+                                                <span className="producto-precio">
+                                                    ${p.precio}
+                                                    {p.precioDoble > 0 && ` / Doble $${p.precioDoble}`}
+                                                </span>
+                                            </div>
 
-                                                <button
-                                                    className="producto-eliminar"
-                                                    onClick={() => eliminarProducto(p.id)}
-                                                >
-                                                    🗑
-                                                </button>
-                                            </li>
-                                        ))}
-                                    </ul>
+                                            <button
+                                                className="producto-eliminar"
+                                                onClick={() => eliminarProducto(p.id)}
+                                            >
+                                                🗑
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
 
-                                </div>
-                            )
-                        )}
+                            </div>
+                        ))}
                     </section>
 
                 </div>
