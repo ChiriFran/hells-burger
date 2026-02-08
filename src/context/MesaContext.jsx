@@ -6,6 +6,7 @@ import {
   doc,
   updateDoc,
   addDoc,
+  deleteDoc,
 } from "firebase/firestore";
 
 const MesaContext = createContext();
@@ -18,9 +19,14 @@ export const MesaProvider = ({ children }) => {
   const unsubscribeMesasRef = useRef(null);
   const unsubscribePedidosRef = useRef(null);
 
+  /* =========================
+     🔄 SUSCRIPCIONES
+  ========================= */
+
   const subscribeMesas = () => {
     setLoadingMesas(true);
     unsubscribeMesasRef.current?.();
+
     unsubscribeMesasRef.current = onSnapshot(
       collection(db, "mesas"),
       (snapshot) => {
@@ -36,10 +42,14 @@ export const MesaProvider = ({ children }) => {
 
   const subscribePedidos = () => {
     unsubscribePedidosRef.current?.();
+
     unsubscribePedidosRef.current = onSnapshot(
       collection(db, "pedidos"),
       (snapshot) => {
         setPedidos(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
+      },
+      (error) => {
+        console.error("Error snapshot pedidos:", error);
       },
     );
   };
@@ -47,33 +57,53 @@ export const MesaProvider = ({ children }) => {
   useEffect(() => {
     subscribeMesas();
     subscribePedidos();
+
     return () => {
       unsubscribeMesasRef.current?.();
       unsubscribePedidosRef.current?.();
     };
   }, []);
 
-  // Crear mesa
+  /* =========================
+     ➕ CREAR MESA
+  ========================= */
+
   const crearMesaPublica = async (nombreMesa) => {
-    // 🔹 Obtener último número de las mesas existentes
     const ultimoNumero = mesas.length
       ? Math.max(...mesas.map((m) => m.numero || 0))
       : 0;
+
     const nuevoNumero = ultimoNumero + 1;
 
-    // 🔹 Crear la mesa
     const mesaRef = await addDoc(collection(db, "mesas"), {
       nombre: nombreMesa,
-      estado: "ocupada",
-      createdAt: new Date(),
+      estado: "libre",
       pedidoActual: null,
       numero: nuevoNumero,
+      createdAt: new Date(),
     });
 
-    return { id: mesaRef.id, nombre: nombreMesa, numero: nuevoNumero };
+    return {
+      id: mesaRef.id,
+      nombre: nombreMesa,
+      numero: nuevoNumero,
+      estado: "libre",
+      pedidoActual: null,
+    };
   };
 
-  // Crear pedido y vincular con la mesa
+  /* =========================
+     ✏️ ACTUALIZAR MESA (CLAVE)
+  ========================= */
+
+  const actualizarMesa = async (mesaId, data) => {
+    await updateDoc(doc(db, "mesas", mesaId), data);
+  };
+
+  /* =========================
+     ➕ CREAR PEDIDO DESDE MESA
+  ========================= */
+
   const agregarPedidoPublico = async (mesa, items) => {
     const horaInicio = new Date();
     const horaStr = horaInicio.toLocaleTimeString();
@@ -97,13 +127,29 @@ export const MesaProvider = ({ children }) => {
       total: productos.reduce((acc, p) => acc + p.subtotal, 0),
     });
 
-    // 🔹 Actualizar la mesa con el id del pedido
-    await updateDoc(doc(db, "mesas", mesa.id), {
+    await actualizarMesa(mesa.id, {
+      estado: "ocupada",
       pedidoActual: pedidoRef.id,
     });
 
-    return { ...mesa, pedidoId: pedidoRef.id };
+    return pedidoRef.id;
   };
+
+  /* =========================
+     ❌ BORRAR MESA
+  ========================= */
+
+  const borrarMesa = async (mesa) => {
+    if (mesa.estado !== "libre" || mesa.pedidoActual) {
+      throw new Error("No se puede borrar una mesa ocupada");
+    }
+
+    await deleteDoc(doc(db, "mesas", mesa.id));
+  };
+
+  /* =========================
+     PROVIDER
+  ========================= */
 
   return (
     <MesaContext.Provider
@@ -113,6 +159,8 @@ export const MesaProvider = ({ children }) => {
         loadingMesas,
         crearMesaPublica,
         agregarPedidoPublico,
+        actualizarMesa, // 👈 AHORA EXISTE
+        borrarMesa,
       }}
     >
       {children}

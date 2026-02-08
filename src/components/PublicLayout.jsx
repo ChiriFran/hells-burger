@@ -1,7 +1,7 @@
 import PublicProductos from "./PublicProductos";
 import PublicCartSidebar from "./PublicCartSidebar";
 import { usePublicCart } from "../context/PublicCartContext";
-import logo from "../../assets/logo/logo.png";
+import logo from "../../assets/logo/logo-con-diablo.jpeg";
 
 import "../styles/publicLayout.css";
 

@@ -5,16 +5,18 @@ import "../styles/mesa.css";
 export default function Mesa({ mesa, setMesaSeleccionada }) {
   const { borrarMesa, pedidos } = useMesasContext();
   const [tiempoTranscurrido, setTiempoTranscurrido] = useState("00:00");
-  const [despachado, setDespachado] = useState(false); // estado visual
+  const [despachado, setDespachado] = useState(false);
 
   const handleClick = () => setMesaSeleccionada(mesa);
 
   const handleBorrar = async (e) => {
     e.stopPropagation();
+
     if (mesa.estado !== "libre" || mesa.pedidoActual) {
       alert("No se puede borrar una mesa ocupada");
       return;
     }
+
     if (confirm(`¿Eliminar la mesa ${mesa.numero}?`)) {
       try {
         await borrarMesa(mesa);
@@ -28,13 +30,13 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
     mesa.estado === "libre"
       ? "mesa-libre"
       : mesa.estado === "ocupada"
-        ? "mesa-ocupada"
-        : "mesa-reservada";
+      ? "mesa-ocupada"
+      : "mesa-reservada";
 
   const pedido = pedidos.find((p) => p.id === mesa.pedidoActual);
-  const items = pedido?.productos || pedido?.items || [];
+  const items = pedido?.productos || [];
 
-  // Contador de tiempo desde la creación del pedido
+  // ⏱️ Contador desde inicio del pedido
   useEffect(() => {
     if (!pedido || !pedido.horaInicio) return;
 
@@ -51,13 +53,14 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
 
   const toggleDespachado = (e) => {
     e.stopPropagation();
-    setDespachado(!despachado);
+    setDespachado((prev) => !prev);
   };
 
   return (
     <div onClick={handleClick} className={`mesa-card ${claseEstado}`}>
       <div className="mesa-header">
         <span className="icono-mesa">🪑</span>
+
         {mesa.estado === "libre" && !mesa.pedidoActual && (
           <button onClick={handleBorrar} className="mesa-borrar">
             ✕
@@ -75,10 +78,7 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
         <div className="mesa-pedidos-icons">
           {items.map((item, index) =>
             Array.from({ length: item.cantidad || 1 }).map((_, i) => (
-              <span
-                key={`${index}-${i}`}
-                className="icono-hamburguesa"
-              >
+              <span key={`${index}-${i}`} className="icono-hamburguesa">
                 🍔
               </span>
             ))
@@ -86,7 +86,6 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
         </div>
       )}
 
-      {/* Pie de tarjeta con despachado y contador */}
       {pedido && (
         <div className="mesa-footer">
           <span className="mesa-tiempo">{tiempoTranscurrido}</span>

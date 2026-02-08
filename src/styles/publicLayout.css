@@ -5,7 +5,6 @@
 }
 
 .public-header {
-
   z-index: 20;
   background: var(--color-negro);
   color: white;
@@ -21,14 +20,6 @@
   border-radius: 100%;
 }
 
-.public-cart-btn {
-  background: none;
-  border: none;
-  font-size: 22px;
-  cursor: pointer;
-  color: white;
-}
-
 .public-cart-badge {
   position: absolute;
   top: -6px;
@@ -41,13 +32,16 @@
 }
 
 .public-admin-access-btn {
+  position: fixed;
+  bottom: 14px;
+  right: 14px;
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 14px;
-  background-color: #111111;
+  padding: 8px 12px;
+  background: #111;
   color: var(--color-letra);
-  border: 1px solid #2a2a2a;
+  border: 4px dashed rgba(128, 128, 128, 0.192);
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
@@ -55,7 +49,7 @@
 }
 
 .public-admin-access-btn:hover {
-  filter: brightness(1);
+  opacity: 1;
 }
 
 .public-cart-btn {
@@ -66,7 +60,7 @@
   padding: 8px;
   background-color: #111111;
   color: var(--color-letra);
-  border: 1px solid #2a2a2a;
+  border: 4px dashed rgba(128, 128, 128, 0.192);
   border-radius: 6px;
   cursor: pointer;
   transition: 0.2s;
