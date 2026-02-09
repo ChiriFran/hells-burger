@@ -81,14 +81,12 @@
 .public-menu-item {
   display: flex;
   align-items: center;
-  background-color: var(--color-negro);
   padding: 12px 16px;
-  border-radius: 12px;
   gap: 12px;
   transition:
     transform 0.2s,
     box-shadow 0.2s;
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .public-menu-item:hover {
