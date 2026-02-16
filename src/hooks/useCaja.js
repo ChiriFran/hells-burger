@@ -3,9 +3,10 @@ import { db } from "../firebase/config";
 import {
   doc,
   getDoc,
-  updateDoc,
+  setDoc,
   collection,
   getDocs,
+  arrayUnion,
 } from "firebase/firestore";
 
 export const useCaja = () => {
@@ -13,9 +14,10 @@ export const useCaja = () => {
     ingresos: 0,
     gastos: 0,
     cierre: 0,
+    gastosDetalle: [],
   });
 
-  const [cajas, setCajas] = useState([]); // 👈 HISTÓRICO
+  const [cajas, setCajas] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fecha = new Date().toISOString().slice(0, 10);
@@ -23,62 +25,91 @@ export const useCaja = () => {
   /* ================= CAJA DEL DÍA ================= */
   useEffect(() => {
     const fetchCaja = async () => {
-      const cajaRef = doc(db, "caja", fecha);
-      const cajaSnap = await getDoc(cajaRef);
+      const ref = doc(db, "caja", fecha);
+      const snap = await getDoc(ref);
 
-      if (cajaSnap.exists()) {
-        setCaja(cajaSnap.data());
+      if (snap.exists()) {
+        setCaja(snap.data());
       } else {
-        setCaja({ ingresos: 0, gastos: 0, cierre: 0 });
+        const inicial = {
+          ingresos: 0,
+          gastos: 0,
+          cierre: 0,
+          gastosDetalle: [],
+        };
+        await setDoc(ref, inicial);
+        setCaja(inicial);
       }
     };
 
     fetchCaja();
   }, [fecha]);
 
-  /* ================= HISTÓRICO COMPLETO ================= */
+  /* ================= HISTÓRICO ================= */
   useEffect(() => {
     const fetchCajas = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, "caja"));
-
-        const data = snapshot.docs.map((doc) => ({
-          fecha: doc.id,        // 👈 ID = fecha
-          ...doc.data(),        // ingresos, gastos, cierre
-        }));
-
-        setCajas(data);
-      } catch (error) {
-        console.error("Error cargando histórico de caja:", error);
-      } finally {
-        setLoading(false);
-      }
+      const snapshot = await getDocs(collection(db, "caja"));
+      const data = snapshot.docs.map((d) => ({
+        fecha: d.id,
+        ...d.data(),
+      }));
+      setCajas(data);
+      setLoading(false);
     };
 
     fetchCajas();
   }, []);
 
-  /* ================= ACCIONES ================= */
-  const agregarGasto = async (monto) => {
-    const cajaRef = doc(db, "caja", fecha);
-    await updateDoc(cajaRef, { gastos: caja.gastos + monto });
+  /* ================= INGRESOS ================= */
+  const agregarIngreso = async (monto) => {
+    const ref = doc(db, "caja", fecha);
+    const nuevo = (caja.ingresos || 0) + monto;
 
-    setCaja((prev) => ({ ...prev, gastos: prev.gastos + monto }));
+    await setDoc(ref, { ingresos: nuevo }, { merge: true });
+    setCaja((prev) => ({ ...prev, ingresos: nuevo }));
   };
 
+  /* ================= GASTOS ================= */
+  const agregarGasto = async ({ monto, descripcion }) => {
+    const ref = doc(db, "caja", fecha);
+    const nuevoTotal = (caja.gastos || 0) + monto;
+
+    const gastoObj = {
+      monto,
+      descripcion,
+      fechaHora: new Date().toISOString(),
+    };
+
+    await setDoc(
+      ref,
+      {
+        gastos: nuevoTotal,
+        gastosDetalle: arrayUnion(gastoObj),
+      },
+      { merge: true },
+    );
+
+    setCaja((prev) => ({
+      ...prev,
+      gastos: nuevoTotal,
+      gastosDetalle: [...(prev.gastosDetalle || []), gastoObj],
+    }));
+  };
+
+  /* ================= CIERRE ================= */
   const cerrarCaja = async () => {
-    const cajaRef = doc(db, "caja", fecha);
-    const cierre = caja.ingresos - caja.gastos;
+    const ref = doc(db, "caja", fecha);
+    const cierre = (caja.ingresos || 0) - (caja.gastos || 0);
 
-    await updateDoc(cajaRef, { cierre });
-
+    await setDoc(ref, { cierre }, { merge: true });
     setCaja((prev) => ({ ...prev, cierre }));
   };
 
   return {
-    caja,        // día actual
-    cajas,       // 👈 histórico completo
+    caja,
+    cajas,
     loading,
+    agregarIngreso,
     agregarGasto,
     cerrarCaja,
   };

@@ -3,12 +3,13 @@ import { useMesasContext } from "../context/MesaContext";
 import "../styles/mesa.css";
 
 export default function Mesa({ mesa, setMesaSeleccionada }) {
-  const { borrarMesa, pedidos } = useMesasContext();
+  const { borrarMesa, pedidos, marcarDespachado } = useMesasContext();
+
   const [tiempoTranscurrido, setTiempoTranscurrido] = useState("00:00");
-  const [despachado, setDespachado] = useState(false);
 
   const handleClick = () => setMesaSeleccionada(mesa);
 
+  /* ================= BORRAR MESA ================= */
   const handleBorrar = async (e) => {
     e.stopPropagation();
 
@@ -26,23 +27,26 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
     }
   };
 
+  /* ================= CLASES DE ESTADO ================= */
   const claseEstado =
     mesa.estado === "libre"
       ? "mesa-libre"
       : mesa.estado === "ocupada"
-      ? "mesa-ocupada"
-      : "mesa-reservada";
+        ? "mesa-ocupada"
+        : "mesa-reservada";
 
-  const pedido = pedidos.find((p) => p.id === mesa.pedidoActual);
+  /* ================= PEDIDO ================= */
+  const pedido = pedidos?.find((p) => p.id === mesa.pedidoActual);
   const items = pedido?.productos || [];
 
-  // ⏱️ Contador desde inicio del pedido
+  /* ================= TIMER ================= */
   useEffect(() => {
-    if (!pedido || !pedido.horaInicio) return;
+    if (!pedido?.horaInicio) return;
+
+    const inicio = pedido.horaInicio.toDate?.() || new Date(pedido.horaInicio);
 
     const intervalo = setInterval(() => {
-      const creado = pedido.horaInicio.toDate();
-      const diff = Math.floor((new Date() - creado) / 1000);
+      const diff = Math.floor((new Date() - inicio) / 1000);
       const minutos = String(Math.floor(diff / 60)).padStart(2, "0");
       const segundos = String(diff % 60).padStart(2, "0");
       setTiempoTranscurrido(`${minutos}:${segundos}`);
@@ -51,13 +55,34 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
     return () => clearInterval(intervalo);
   }, [pedido]);
 
-  const toggleDespachado = (e) => {
+  const [despachado, setDespachado] = useState(false);
+
+  /* ================= SINCRONIZAR DESPACHADO ================= */
+  useEffect(() => {
+    if (pedido?.despachado !== undefined) {
+      setDespachado(pedido.despachado);
+    }
+  }, [pedido]);
+
+  /* ================= DESPACHAR ================= */
+  const toggleDespachado = async (e) => {
     e.stopPropagation();
-    setDespachado((prev) => !prev);
+    const nuevo = !despachado;
+    setDespachado(nuevo);
+
+    if (pedido) {
+      try {
+        await marcarDespachado(pedido.id, nuevo);
+      } catch (e) {
+        console.error("Error despachando:", e);
+        setDespachado(!nuevo); // rollback UI
+      }
+    }
   };
 
   return (
     <div onClick={handleClick} className={`mesa-card ${claseEstado}`}>
+      {/* HEADER */}
       <div className="mesa-header">
         <span className="icono-mesa">🪑</span>
 
@@ -74,21 +99,23 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
         <span className="mesa-estado">{mesa.estado}</span>
       </div>
 
+      {/* ICONOS PEDIDOS (LIMITADO) */}
       {items.length > 0 && (
         <div className="mesa-pedidos-icons">
-          {items.map((item, index) =>
-            Array.from({ length: item.cantidad || 1 }).map((_, i) => (
-              <span key={`${index}-${i}`} className="icono-hamburguesa">
-                🍔
-              </span>
-            ))
-          )}
+          {items.slice(0, 6).map((item, index) => (
+            <span key={index} className="icono-hamburguesa">
+              🍔 x{item.cantidad || 1}
+            </span>
+          ))}
+          {items.length > 6 && <span>+{items.length - 6}</span>}
         </div>
       )}
 
+      {/* FOOTER */}
       {pedido && (
         <div className="mesa-footer">
           <span className="mesa-tiempo">{tiempoTranscurrido}</span>
+
           <button
             className={`mesa-despachado ${despachado ? "marcado" : ""}`}
             onClick={toggleDespachado}

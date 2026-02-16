@@ -7,15 +7,40 @@ export default function Caja() {
   const { caja, cajas, agregarGasto, cerrarCaja } = useCaja();
 
   const [montoGasto, setMontoGasto] = useState("");
+  const [descGasto, setDescGasto] = useState("");
   const [openStats, setOpenStats] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const totalCierre = caja.ingresos - caja.gastos;
+  const totalCierre = (caja?.ingresos || 0) - (caja?.gastos || 0);
 
-  const handleAgregarGasto = () => {
+  /* ================= AGREGAR GASTO ================= */
+  const handleAgregarGasto = async () => {
     const valor = Number(montoGasto);
-    if (!valor || valor <= 0) return;
-    agregarGasto(valor);
-    setMontoGasto("");
+
+    if (!valor || valor <= 0 || !descGasto.trim()) {
+      alert("⚠️ Completá monto y descripción");
+      return;
+    }
+
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      await agregarGasto({ monto: valor, descripcion: descGasto });
+      setMontoGasto("");
+      setDescGasto("");
+    } catch (err) {
+      console.error("Error agregando gasto:", err);
+      alert("Error al guardar gasto");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ================= CERRAR CAJA ================= */
+  const handleCerrarCaja = () => {
+    if (!window.confirm("⚠️ Seguro que querés cerrar la caja del día?")) return;
+    cerrarCaja();
   };
 
   return (
@@ -25,12 +50,12 @@ export default function Caja() {
         <h2 className="caja-title">💰 Caja del Día</h2>
       </header>
 
-      {/* RESUMEN */}
+      {/* TARJETAS */}
       <section className="caja-cards">
         <div className="caja-card ingresos">
           <div className="caja-icon">💵</div>
           <div>
-            <span className="caja-value">${caja.ingresos}</span>
+            <span className="caja-value">${caja?.ingresos || 0}</span>
             <span className="caja-label">Ingresos</span>
           </div>
         </div>
@@ -38,7 +63,7 @@ export default function Caja() {
         <div className="caja-card gastos">
           <div className="caja-icon">🧾</div>
           <div>
-            <span className="caja-value">${caja.gastos}</span>
+            <span className="caja-value">${caja?.gastos || 0}</span>
             <span className="caja-label">Gastos</span>
           </div>
         </div>
@@ -56,18 +81,30 @@ export default function Caja() {
       <section className="caja-actions">
         <div className="gasto-personalizado">
           <input
+            type="text"
+            placeholder="Descripción del gasto"
+            value={descGasto}
+            onChange={(e) => setDescGasto(e.target.value)}
+          />
+
+          <input
             type="number"
             placeholder="Monto del gasto"
             value={montoGasto}
             onChange={(e) => setMontoGasto(e.target.value)}
             min="1"
           />
-          <button className="btn-gasto" onClick={handleAgregarGasto}>
-            ➖ Agregar gasto
+
+          <button
+            className="btn-gasto"
+            onClick={handleAgregarGasto}
+            disabled={loading}
+          >
+            {loading ? "Guardando..." : "➖ Agregar gasto"}
           </button>
         </div>
 
-        <button className="btn-cerrar-caja" onClick={cerrarCaja}>
+        <button className="btn-cerrar-caja" onClick={handleCerrarCaja}>
           🔒 Cerrar caja
         </button>
 
@@ -75,7 +112,7 @@ export default function Caja() {
           className="dashboard-stats-open-btn"
           onClick={() => setOpenStats(true)}
         >
-          📊 Ver estadísticas de caja
+          📊 Ver estadísticas
         </button>
       </section>
 

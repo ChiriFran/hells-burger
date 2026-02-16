@@ -7,75 +7,45 @@ import {
   updateDoc,
   addDoc,
   deleteDoc,
+  runTransaction,
 } from "firebase/firestore";
 
 const MesaContext = createContext();
+export const useMesasContext = () => useContext(MesaContext);
 
 export const MesaProvider = ({ children }) => {
   const [mesas, setMesas] = useState([]);
   const [pedidos, setPedidos] = useState([]);
   const [loadingMesas, setLoadingMesas] = useState(true);
 
-  const unsubscribeMesasRef = useRef(null);
-  const unsubscribePedidosRef = useRef(null);
+  const unsubMesas = useRef(null);
+  const unsubPedidos = useRef(null);
 
-  /* =========================
-     🔄 SUSCRIPCIONES
-  ========================= */
-
-  const subscribeMesas = () => {
-    setLoadingMesas(true);
-    unsubscribeMesasRef.current?.();
-
-    unsubscribeMesasRef.current = onSnapshot(
-      collection(db, "mesas"),
-      (snapshot) => {
-        setMesas(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
-        setLoadingMesas(false);
-      },
-      (error) => {
-        console.error("Error snapshot mesas:", error);
-        setLoadingMesas(false);
-      },
-    );
-  };
-
-  const subscribePedidos = () => {
-    unsubscribePedidosRef.current?.();
-
-    unsubscribePedidosRef.current = onSnapshot(
-      collection(db, "pedidos"),
-      (snapshot) => {
-        setPedidos(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
-      },
-      (error) => {
-        console.error("Error snapshot pedidos:", error);
-      },
-    );
-  };
-
+  // ================== SNAPSHOTS ==================
   useEffect(() => {
-    subscribeMesas();
-    subscribePedidos();
+    unsubMesas.current = onSnapshot(collection(db, "mesas"), (snap) => {
+      setMesas(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      setLoadingMesas(false);
+    });
+
+    unsubPedidos.current = onSnapshot(collection(db, "pedidos"), (snap) => {
+      setPedidos(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    });
 
     return () => {
-      unsubscribeMesasRef.current?.();
-      unsubscribePedidosRef.current?.();
+      unsubMesas.current?.();
+      unsubPedidos.current?.();
     };
   }, []);
 
-  /* =========================
-     ➕ CREAR MESA
-  ========================= */
-
+  // ================== CREAR MESA ==================
   const crearMesaPublica = async (nombreMesa) => {
     const ultimoNumero = mesas.length
       ? Math.max(...mesas.map((m) => m.numero || 0))
       : 0;
-
     const nuevoNumero = ultimoNumero + 1;
 
-    const mesaRef = await addDoc(collection(db, "mesas"), {
+    const ref = await addDoc(collection(db, "mesas"), {
       nombre: nombreMesa,
       estado: "libre",
       pedidoActual: null,
@@ -83,48 +53,28 @@ export const MesaProvider = ({ children }) => {
       createdAt: new Date(),
     });
 
-    return {
-      id: mesaRef.id,
-      nombre: nombreMesa,
-      numero: nuevoNumero,
-      estado: "libre",
-      pedidoActual: null,
-    };
+    return { id: ref.id, nombre: nombreMesa, numero: nuevoNumero };
   };
 
-  /* =========================
-     ✏️ ACTUALIZAR MESA (CLAVE)
-  ========================= */
-
+  // ================== UPDATE MESA ==================
   const actualizarMesa = async (mesaId, data) => {
     await updateDoc(doc(db, "mesas", mesaId), data);
   };
 
-  /* =========================
-     ➕ CREAR PEDIDO DESDE MESA
-  ========================= */
-
-  const agregarPedidoPublico = async (mesa, items) => {
-    const horaInicio = new Date();
-    const horaStr = horaInicio.toLocaleTimeString();
-
-    const productos = items.map((i) => ({
-      nombre: i.titulo,
-      precio: Number(i.precio),
-      cantidad: Number(i.qty),
-      subtotal: Number(i.precio) * Number(i.qty),
-      hora: horaStr,
-    }));
+  // ================== CREAR PEDIDO DESDE MESA ==================
+  const crearPedidoMesa = async (mesa, productos) => {
+    const total = productos.reduce((a, p) => a + p.subtotal, 0);
 
     const pedidoRef = await addDoc(collection(db, "pedidos"), {
       estado: "pendiente",
-      horaInicio,
+      horaInicio: new Date(),
       horaCierre: null,
       medioPago: null,
       mesaId: mesa.id,
       mesaNombre: mesa.nombre,
       productos,
-      total: productos.reduce((acc, p) => acc + p.subtotal, 0),
+      total,
+      tipo: "mesa",
     });
 
     await actualizarMesa(mesa.id, {
@@ -135,21 +85,66 @@ export const MesaProvider = ({ children }) => {
     return pedidoRef.id;
   };
 
-  /* =========================
-     ❌ BORRAR MESA
-  ========================= */
+  // ================== 🔥 CERRAR PEDIDO ATÓMICO ==================
+  const cerrarPedidoSeguro = async (pedidoId, medioPago) => {
+    await runTransaction(db, async (tx) => {
+      const pedidoRef = doc(db, "pedidos", pedidoId);
+      const pedidoSnap = await tx.get(pedidoRef);
+      if (!pedidoSnap.exists()) throw "Pedido no existe";
 
+      const pedido = pedidoSnap.data();
+      const mesaRef = doc(db, "mesas", pedido.mesaId);
+
+      const fecha = new Date().toISOString().slice(0, 10);
+      const cajaRef = doc(db, "caja", fecha);
+      const cajaSnap = await tx.get(cajaRef); // ✅ READ ANTES DE WRITE
+
+      // calcular ingresos
+      const ingresos =
+        (cajaSnap.exists() ? cajaSnap.data().ingresos : 0) + pedido.total;
+
+      // ✅ AHORA RECIÉN HACEMOS WRITES
+      tx.update(pedidoRef, {
+        estado: "pagado",
+        medioPago,
+        horaCierre: new Date(),
+      });
+
+      tx.update(mesaRef, {
+        estado: "libre",
+        pedidoActual: null,
+      });
+
+      tx.set(cajaRef, { ingresos, gastos: 0, cierre: 0 }, { merge: true });
+    });
+  };
+
+  // ================== BORRAR MESA ==================
   const borrarMesa = async (mesa) => {
     if (mesa.estado !== "libre" || mesa.pedidoActual) {
       throw new Error("No se puede borrar una mesa ocupada");
     }
-
     await deleteDoc(doc(db, "mesas", mesa.id));
   };
 
-  /* =========================
-     PROVIDER
-  ========================= */
+  // ================== 🛠 WATCHDOG ANTI MESAS ZOMBIES ==================
+  useEffect(() => {
+    mesas.forEach(async (m) => {
+      if (m.estado === "ocupada" && m.pedidoActual) {
+        const existe = pedidos.find((p) => p.id === m.pedidoActual);
+        if (!existe) {
+          console.warn("Mesa zombie reparada:", m.id);
+          await actualizarMesa(m.id, { estado: "libre", pedidoActual: null });
+        }
+      }
+    });
+  }, [mesas, pedidos]);
+
+  /* DESPACHADO */
+  const marcarDespachado = async (pedidoId, estado) => {
+    const ref = doc(db, "pedidos", pedidoId);
+    await updateDoc(ref, { despachado: estado });
+  };
 
   return (
     <MesaContext.Provider
@@ -157,9 +152,11 @@ export const MesaProvider = ({ children }) => {
         mesas,
         pedidos,
         loadingMesas,
+        marcarDespachado,
         crearMesaPublica,
-        agregarPedidoPublico,
-        actualizarMesa, // 👈 AHORA EXISTE
+        crearPedidoMesa,
+        cerrarPedidoSeguro,
+        actualizarMesa,
         borrarMesa,
       }}
     >
@@ -167,5 +164,3 @@ export const MesaProvider = ({ children }) => {
     </MesaContext.Provider>
   );
 };
-
-export const useMesasContext = () => useContext(MesaContext);

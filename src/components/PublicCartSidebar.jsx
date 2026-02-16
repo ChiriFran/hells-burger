@@ -2,9 +2,12 @@ import { useState } from "react";
 import { usePublicCart } from "../context/PublicCartContext";
 import { useMesasContext } from "../context/MesaContext";
 import "../styles/publicCart.css";
+import { db } from "../firebase/config";
+import { deleteDoc, doc } from "firebase/firestore";
 
 export default function PublicCartSidebar() {
-  const { crearMesaPublica, agregarPedidoPublico } = useMesasContext();
+  const { crearMesaPublica, crearPedidoMesa } = useMesasContext();
+
   const {
     items,
     open,
@@ -18,7 +21,6 @@ export default function PublicCartSidebar() {
 
   const [loading, setLoading] = useState(false);
   const [nombreMesa, setNombreMesa] = useState("");
-
   const [tipoEntrega, setTipoEntrega] = useState("retiro");
   const [envio, setEnvio] = useState({
     direccion: "",
@@ -32,38 +34,51 @@ export default function PublicCartSidebar() {
 
   const step = pedidoCreado ? "checkout" : "cart";
 
+  // ================= CREAR PEDIDO =================
   const handleCrearPedido = async () => {
     if (items.length === 0 || loading || pedidoCreado) return;
-
-    if (!nombreMesa.trim()) {
-      return alert("Ingresá tu nombre");
-    }
+    if (!nombreMesa.trim()) return alert("Ingresá tu nombre");
 
     if (tipoEntrega === "envio") {
-      if (
-        !envio.direccion.trim() ||
-        !envio.barrio.trim() ||
-        !envio.telefono.trim()
-      ) {
+      if (!envio.direccion || !envio.barrio || !envio.telefono) {
         return alert("Completá los datos de envío");
       }
     }
 
+    let mesaCreada = null;
+
     try {
       setLoading(true);
 
-      const nuevaMesa = await crearMesaPublica(nombreMesa.trim());
+      // 1️⃣ Crear mesa
+      mesaCreada = await crearMesaPublica(nombreMesa.trim());
+      console.log("Mesa creada:", mesaCreada);
 
-      const nuevoPedido = await agregarPedidoPublico(nuevaMesa, items, {
-        tipoEntrega,
-        envio: tipoEntrega === "envio" ? envio : null,
-        comentarios,
-      });
+      // 2️⃣ Normalizar productos
+      const productos = items.map((item) => ({
+        nombre: item.titulo,
+        cantidad: item.qty,
+        precio: item.precio,
+        subtotal: item.precio * item.qty,
+        extras: item.extras || [],
+        comentarioProducto: item.comentarioProducto || "",
+      }));
 
-      setPedidoCreado(nuevoPedido);
+      // 3️⃣ Crear pedido
+      const pedidoId = await crearPedidoMesa(mesaCreada, productos);
+      console.log("Pedido creado:", pedidoId);
+
+      // 4️⃣ Guardar pedido en contexto
+      setPedidoCreado({ pedidoId });
     } catch (error) {
-      console.error(error);
-      alert("Ocurrió un error al crear el pedido");
+      console.error("ERROR PEDIDO:", error);
+      alert(error.message || "Ocurrió un error al crear el pedido");
+
+      // 🔥 rollback mesa si falla pedido
+      if (mesaCreada?.id) {
+        await deleteDoc(doc(db, "mesas", mesaCreada.id));
+        console.warn("Mesa eliminada por rollback");
+      }
     } finally {
       setLoading(false);
     }
@@ -103,8 +118,8 @@ export default function PublicCartSidebar() {
 
               {item.extras?.length > 0 && (
                 <div className="cart-item-extras">
-                  {item.extras.map((extra, index) => (
-                    <span key={index} className="extra-chip">
+                  {item.extras.map((extra, i) => (
+                    <span key={i} className="extra-chip">
                       + {extra.nombre}
                     </span>
                   ))}
@@ -124,10 +139,10 @@ export default function PublicCartSidebar() {
           </div>
         ))}
 
-        {/* FORMULARIO (SCROLL NATURAL) */}
+        {/* FORMULARIO */}
         {step === "cart" && items.length > 0 && (
           <>
-            {/* NOMBRE */}
+            {/* Nombre */}
             <div className="mesa-nombre-input">
               <label>Nombre</label>
               <input
@@ -138,7 +153,7 @@ export default function PublicCartSidebar() {
               />
             </div>
 
-            {/* ENTREGA */}
+            {/* Entrega */}
             <div className="entrega-selector">
               <button
                 className={tipoEntrega === "retiro" ? "active" : ""}
@@ -154,13 +169,12 @@ export default function PublicCartSidebar() {
               </button>
             </div>
 
-            {/* ENVÍO */}
+            {/* Envío */}
             {tipoEntrega === "envio" && (
               <div className="envio-form">
                 <label>
                   Dirección
                   <input
-                    type="text"
                     value={envio.direccion}
                     onChange={(e) =>
                       setEnvio({ ...envio, direccion: e.target.value })
@@ -171,7 +185,6 @@ export default function PublicCartSidebar() {
                 <label>
                   Barrio
                   <input
-                    type="text"
                     value={envio.barrio}
                     onChange={(e) =>
                       setEnvio({ ...envio, barrio: e.target.value })
@@ -182,7 +195,6 @@ export default function PublicCartSidebar() {
                 <label>
                   Teléfono
                   <input
-                    type="tel"
                     value={envio.telefono}
                     onChange={(e) =>
                       setEnvio({ ...envio, telefono: e.target.value })
@@ -192,7 +204,7 @@ export default function PublicCartSidebar() {
               </div>
             )}
 
-            {/* COMENTARIOS */}
+            {/* Comentarios */}
             <div className="comentarios-box">
               <label>Comentarios</label>
               <textarea
@@ -236,7 +248,7 @@ export default function PublicCartSidebar() {
 
               <a
                 className="checkout-wsp-btn"
-                href={`https://wa.me/${WHATSAPP}?text=Pedido por $${total} - ${tipoEntrega}`}
+                href={`https://wa.me/${WHATSAPP}?text=Pedido%20${pedidoCreado.pedidoId}%20-%20Total%20$${total}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -251,7 +263,7 @@ export default function PublicCartSidebar() {
         )}
       </div>
 
-      {/* FOOTER (solo total + CTA) */}
+      {/* FOOTER */}
       <footer className="public-cart-footer">
         {step === "cart" && (
           <>
