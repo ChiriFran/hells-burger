@@ -13,29 +13,27 @@
   -moz-osx-font-smoothing: grayscale;
 
   --color-letra: #e8d1af;
-  --color-fondo: #0a0b06;
+  --color-fondo: #090908;
   --color-rojo: #b63925;
   --title-font: "Helvetica";
   --text-font: "DM Mono";
-}
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-:root {
-  --bg-main: #0f1115;
+  --bg-main: #0a0b06;
   --bg-card: #161a20;
   --bg-card-hover: #1f242c;
-  --primary: #ff2d2d;
+  --primary: #b63925;
   --secondary: #ffb000;
   --success: #00d26a;
   --text-main: #ffffff;
   --text-muted: #9aa4b2;
   --border-dark: #2a2f38;
   --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
