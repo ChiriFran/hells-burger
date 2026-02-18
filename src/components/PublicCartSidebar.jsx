@@ -50,11 +50,10 @@ export default function PublicCartSidebar() {
     try {
       setLoading(true);
 
-      // 1️⃣ Crear mesa
+      // 1️⃣ Crear mesa fake para público
       mesaCreada = await crearMesaPublica(nombreMesa.trim());
-      console.log("Mesa creada:", mesaCreada);
 
-      // 2️⃣ Normalizar productos
+      // 2️⃣ Productos
       const productos = items.map((item) => ({
         nombre: item.titulo,
         cantidad: item.qty,
@@ -64,20 +63,34 @@ export default function PublicCartSidebar() {
         comentarioProducto: item.comentarioProducto || "",
       }));
 
-      // 3️⃣ Crear pedido
-      const pedidoId = await crearPedidoMesa(mesaCreada, productos);
-      console.log("Pedido creado:", pedidoId);
+      // 3️⃣ 🔥 PEDIDO DATA COMPLETO (ESTA ERA LA CLAVE)
+      const pedidoData = {
+        productos,
+        envio,
+        tipoEntrega,
+        comentarios,
+        total,
+        cliente: nombreMesa,
+      };
 
-      // 4️⃣ Guardar pedido en contexto
-      setPedidoCreado({ pedidoId });
+      // 4️⃣ Crear pedido
+      const pedidoId = await crearPedidoMesa(mesaCreada, pedidoData);
+
+      // 5️⃣ Guardar en contexto
+      setPedidoCreado({
+        id: pedidoId,
+        total,
+        tipoEntrega,
+        envio,
+        cliente: nombreMesa,
+      });
     } catch (error) {
       console.error("ERROR PEDIDO:", error);
-      alert(error.message || "Ocurrió un error al crear el pedido");
+      alert(error.message || "Error al crear pedido");
 
-      // 🔥 rollback mesa si falla pedido
       if (mesaCreada?.id) {
         await deleteDoc(doc(db, "mesas", mesaCreada.id));
-        console.warn("Mesa eliminada por rollback");
+        console.warn("Mesa rollback eliminada");
       }
     } finally {
       setLoading(false);

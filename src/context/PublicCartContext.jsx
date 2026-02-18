@@ -6,7 +6,7 @@ const PublicCartContext = createContext();
 export const usePublicCart = () => useContext(PublicCartContext);
 
 export function PublicCartProvider({ children }) {
-  const { agregarPedido } = useMesasContext(); // 🔹 ya seguro
+  const { agregarPedido } = useMesasContext();
   const [items, setItems] = useState([]);
   const [open, setOpen] = useState(false);
   const [pedidoCreado, setPedidoCreado] = useState(null);
@@ -16,7 +16,7 @@ export function PublicCartProvider({ children }) {
       ...prev,
       {
         ...producto,
-        cartItemId: crypto.randomUUID(), // 🆕 id único por item
+        cartItemId: crypto.randomUUID(),
         qty: 1,
       },
     ]);
@@ -30,7 +30,8 @@ export function PublicCartProvider({ children }) {
 
   const total = items.reduce((acc, i) => acc + i.precio * i.qty, 0);
 
-  const crearPedidoPublico = async (mesaSeleccionada) => {
+  // 👇 ahora recibe envio
+  const crearPedidoPublico = async (mesaSeleccionada, envio) => {
     if (items.length === 0 || !mesaSeleccionada) return;
 
     const ahora = new Date();
@@ -55,6 +56,7 @@ export function PublicCartProvider({ children }) {
       mesaNombre: mesaSeleccionada.nombre,
       productos,
       total,
+      envio, // 👈 SE GUARDA EN FIREBASE
     };
 
     const pedidoId = await agregarPedido(pedido);

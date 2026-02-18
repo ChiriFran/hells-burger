@@ -61,20 +61,30 @@ export const MesaProvider = ({ children }) => {
     await updateDoc(doc(db, "mesas", mesaId), data);
   };
 
-  // ================== CREAR PEDIDO DESDE MESA ==================
-  const crearPedidoMesa = async (mesa, productos) => {
-    const total = productos.reduce((a, p) => a + p.subtotal, 0);
+  // ================== ✅ CREAR PEDIDO DESDE MESA (ADAPTADO) ==================
+  // ahora recibe pedidoData completo (productos + envio + comentarios etc)
+  const crearPedidoMesa = async (mesa, pedidoData) => {
+    const { productos, envio, tipoEntrega, comentarios, total, cliente } =
+      pedidoData;
 
     const pedidoRef = await addDoc(collection(db, "pedidos"), {
       estado: "pendiente",
       horaInicio: new Date(),
       horaCierre: null,
       medioPago: null,
+
       mesaId: mesa.id,
       mesaNombre: mesa.nombre,
-      productos,
-      total,
-      tipo: "mesa",
+
+      productos: productos || [],
+      total: total || 0,
+
+      tipoEntrega: tipoEntrega || "retiro",
+      envio: envio || null,
+      comentarios: comentarios || "",
+      cliente: cliente || "",
+
+      tipo: "publico",
     });
 
     await actualizarMesa(mesa.id, {
@@ -97,13 +107,11 @@ export const MesaProvider = ({ children }) => {
 
       const fecha = new Date().toISOString().slice(0, 10);
       const cajaRef = doc(db, "caja", fecha);
-      const cajaSnap = await tx.get(cajaRef); // ✅ READ ANTES DE WRITE
+      const cajaSnap = await tx.get(cajaRef);
 
-      // calcular ingresos
       const ingresos =
         (cajaSnap.exists() ? cajaSnap.data().ingresos : 0) + pedido.total;
 
-      // ✅ AHORA RECIÉN HACEMOS WRITES
       tx.update(pedidoRef, {
         estado: "pagado",
         medioPago,
@@ -127,7 +135,7 @@ export const MesaProvider = ({ children }) => {
     await deleteDoc(doc(db, "mesas", mesa.id));
   };
 
-  // ================== 🛠 WATCHDOG ANTI MESAS ZOMBIES ==================
+  // ================== WATCHDOG MESAS ZOMBIES ==================
   useEffect(() => {
     mesas.forEach(async (m) => {
       if (m.estado === "ocupada" && m.pedidoActual) {
@@ -140,7 +148,7 @@ export const MesaProvider = ({ children }) => {
     });
   }, [mesas, pedidos]);
 
-  /* DESPACHADO */
+  // ================== DESPACHADO ==================
   const marcarDespachado = async (pedidoId, estado) => {
     const ref = doc(db, "pedidos", pedidoId);
     await updateDoc(ref, { despachado: estado });
