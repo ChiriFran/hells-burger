@@ -1,3 +1,4 @@
+/* ================= CONTAINER ================= */
 .pedidos-lista-container {
   width: 90%;
   max-width: 500px;
@@ -21,12 +22,14 @@
   font-style: italic;
 }
 
+/* ================= LISTA ================= */
 .pedidos-lista {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
+/* ================= CARD ================= */
 .pedido-card {
   position: relative;
   border: 1px solid var(--color-letra);
@@ -34,16 +37,27 @@
   padding: 10px;
   margin-bottom: 10px;
   box-shadow: 0 6px 18px var(--color-rojo);
-  transition: .4s;
+  transition: 0.4s;
   backdrop-filter: blur(10px);
 }
 
 .pedido-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
-  transition: .2s;
 }
 
+/* ================= TIPOS DE PEDIDO ================= */
+.pedido-mesa {
+  border-left: 6px solid var(--color-letra);
+  background: rgba(96, 95, 95, 0.112);
+}
+
+.pedido-envio {
+  border-left: 6px solid var(--color-rojo);
+  background: rgba(96, 95, 95, 0.112);
+}
+
+/* ================= HEADER ================= */
 .pedido-header {
   display: flex;
   justify-content: space-between;
@@ -52,48 +66,50 @@
 
 .pedido-mesa {
   font-weight: bold;
+  font-size: 0.95rem;
 }
 
+/* ================= ESTADO ================= */
 .pedido-estado {
   font-weight: 500;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   background-color: var(--color-letra);
   color: var(--color-fondo);
-  padding: 5px 10px;
+  padding: 4px 10px;
   border-radius: 1rem;
 }
 
+/* ================= PRODUCTOS ================= */
 .pedido-productos {
-  border-top: 4px dashed rgba(255, 0, 0, 0.378);
+  border-top: 4px dashed rgba(255, 0, 0, 0.35);
   list-style: none;
   padding-left: 0;
-  margin: 5px 0;
-  margin-bottom: 1rem;
+  margin: 5px 0 1rem 0;
 }
 
 .pedido-producto {
   display: flex;
   justify-content: space-between;
   padding: 2px 0;
-  margin: 10px 15px;
+  margin: 8px 12px;
+  font-size: 0.85rem;
 }
 
+/* ================= FOOTER ================= */
 .pedido-footer {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
   font-weight: bold;
-  margin-top: 1rem;
   padding: 5px 0;
   margin-bottom: 1rem;
-  border-top: 4px dashed rgba(255, 0, 0, 0.378);
+  border-top: 4px dashed rgba(255, 0, 0, 0.35);
 }
 
+/* ================= BOTONES ================= */
 .cargar-mas-btn {
-  display: block;
   width: 100%;
-  padding: 10px 14px;
+  padding: 10px;
   border: none;
   border-radius: 0.5rem;
   background: #4caf50;
@@ -102,12 +118,7 @@
   cursor: pointer;
 }
 
-.cargar-mas-btn:hover {
-  background-color: #4caf4f8f;
-}
-
 .eliminar-pedido-btn {
-  font-family: monospace;
   margin-top: 10px;
   width: 100%;
   padding: 8px;
@@ -116,10 +127,8 @@
   background: var(--color-fondo);
   color: var(--color-letra);
   opacity: 0.5;
-  font-weight: 500;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   cursor: pointer;
-  transition: 0.2s;
 }
 
 .eliminar-pedido-btn:hover {
@@ -127,14 +136,7 @@
   opacity: 1;
 }
 
-
-@media (max-width: 600px) {
-  .pedidos-lista-container {
-    width: 100%;
-  }
-}
-
-/* 🧠 Toolbar cocina */
+/* ================= TOOLBAR ================= */
 .pedidos-toolbar {
   display: flex;
   gap: 8px;
@@ -148,73 +150,56 @@
   border-radius: 0.5rem;
   border: none;
   cursor: pointer;
-  font-weight: 500;
   font-size: 0.8rem;
 }
 
 .toolbar-btn.limpiar {
-  border: 1px solid #222;
-  background: #000;
+  background: black;
   color: white;
 }
 
-.toolbar-btn.limpiar:hover {
-  background: #555;
-}
-
 .toolbar-select {
-  padding: 6px;
+  padding: 6px 10px;
   border-radius: 0.5rem;
-  border: 1px solid var(--color-letra);
-  background: transparent;
-  color: var(--color-letra);
+  border: 1px solid #222;
+  background: #000;
+  color: white;
   font-size: 0.8rem;
 }
 
 .toolbar-count {
   margin-left: auto;
   font-size: 1rem;
-  opacity: 0.8;
 }
 
-/* Select estilo cocina dark */
-.toolbar-select {
-  padding: 6px 10px;
-  border-radius: 0.5rem;
-  border: 1px solid #222;
-  background: #000;
-  /* fondo negro */
-  color: #fff;
-  /* texto blanco */
+/* ================= ENVÍO BOX ================= */
+.pedido-envio-box {
+  background: #111;
+  border: 1px solid #333;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 8px 0;
   font-size: 0.8rem;
-  font-weight: 500;
-  outline: none;
-  cursor: pointer;
-  transition: 0.2s;
 }
 
-/* Hover */
-.toolbar-select:hover {
-  border-color: #ff0000;
+.pedido-envio-box h4 {
+  margin-bottom: 6px;
+  color: #ff9800;
 }
 
-/* Focus (cuando lo abrís) */
-.toolbar-select:focus {
-  border-color: red;
-  box-shadow: 0 0 6px red;
+/* ================= COMENTARIOS ================= */
+.pedido-comentarios {
+  background: #222;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  margin-top: 6px;
+  color: #ffd54f;
 }
 
-/* Opciones del dropdown */
-.toolbar-select option {
-  background: #000;
-  /* fondo negro */
-  color: #fff;
-  /* texto blanco */
-  font-weight: 500;
-}
-
-/* Opciones seleccionadas */
-.toolbar-select option:checked {
-  background: red;
-  color: white;
+/* ================= RESPONSIVE ================= */
+@media (max-width: 600px) {
+  .pedidos-lista-container {
+    width: 100%;
+  }
 }

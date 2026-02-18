@@ -26,7 +26,7 @@ export default function PedidosLista() {
         ...doc.data(),
       }));
       setPedidos(lista);
-      setLimpio(false); // si entra un pedido nuevo, vuelve a mostrarse
+      setLimpio(false);
     });
 
     return () => unsubscribe();
@@ -38,7 +38,7 @@ export default function PedidosLista() {
 
   const eliminarPedido = async (id) => {
     const confirmar = window.confirm(
-      "¿Seguro que querés eliminar este pedido?"
+      "¿Seguro que querés eliminar este pedido?",
     );
     if (!confirmar) return;
 
@@ -69,20 +69,15 @@ export default function PedidosLista() {
     return true;
   });
 
-  const pedidosVisibles = limpio
-    ? []
-    : pedidosFiltrados.slice(0, visibleCount);
+  const pedidosVisibles = limpio ? [] : pedidosFiltrados.slice(0, visibleCount);
 
   return (
     <div className="pedidos-lista-container">
       <h2 className="pedidos-lista-title">Pedidos</h2>
 
-      {/* 🧠 Barra de control cocina */}
+      {/* Toolbar cocina */}
       <div className="pedidos-toolbar">
-        <button
-          className="toolbar-btn limpiar"
-          onClick={() => setLimpio(true)}
-        >
+        <button className="toolbar-btn limpiar" onClick={() => setLimpio(true)}>
           🧹 Limpiar vista
         </button>
 
@@ -97,23 +92,27 @@ export default function PedidosLista() {
           <option value="120">Últimas 2 horas</option>
         </select>
 
-        <span className="toolbar-count">
-          👀 {pedidosVisibles.length}
-        </span>
+        <span className="toolbar-count">👀 {pedidosVisibles.length}</span>
       </div>
 
       {pedidosVisibles.length === 0 ? (
-        <p className="pedidos-lista-empty">
-          No hay pedidos visibles
-        </p>
+        <p className="pedidos-lista-empty">No hay pedidos visibles</p>
       ) : (
         <>
           <ul className="pedidos-lista">
             {pedidosVisibles.map((pedido) => (
-              <li key={pedido.id} className="pedido-card">
+              <li
+                key={pedido.id}
+                className={`pedido-card ${
+                  pedido.tipoEntrega === "envio"
+                    ? "pedido-envio"
+                    : "pedido-mesa"
+                }`}
+              >
                 <div className="pedido-header">
                   <div className="pedido-mesa">
-                    🍽 Mesa {pedido.mesaNombre || pedido.mesaId}
+                    {pedido.tipoEntrega === "envio" ? "🚚 Envío" : "🍽 Mesa"}{" "}
+                    {pedido.mesaNombre || pedido.mesaId}
                   </div>
 
                   <span className={`pedido-estado ${pedido.estado}`}>
@@ -122,7 +121,7 @@ export default function PedidosLista() {
                 </div>
 
                 <ul className="pedido-productos">
-                  {pedido.productos.map((prod, index) => (
+                  {pedido.productos?.map((prod, index) => (
                     <li key={index} className="pedido-producto">
                       <span>
                         {prod.cantidad} x {prod.nombre}
@@ -134,8 +133,32 @@ export default function PedidosLista() {
 
                 <div className="pedido-footer">
                   <span>Total: ${pedido.total}</span>
-                  <span>Pago: {pedido.medioPago}</span>
+                  <span>Pago: {pedido.medioPago || "Pendiente"}</span>
                 </div>
+
+                {/* DATOS DE ENVÍO */}
+                {pedido.envio && pedido.tipoEntrega === "envio" && (
+                  <div className="pedido-envio-box">
+                    <h4>📦 Datos de envío</h4>
+                    <p>
+                      <b>Cliente:</b> {pedido.cliente}
+                    </p>
+                    <p>
+                      <b>Dirección:</b> {pedido.envio.direccion},{" "}
+                      {pedido.envio.barrio}
+                    </p>
+                    <p>
+                      <b>Tel:</b> {pedido.envio.telefono}
+                    </p>
+                  </div>
+                )}
+
+                {/* Comentarios */}
+                {pedido.comentarios && pedido.comentarios.trim() !== "" && (
+                  <div className="pedido-comentarios">
+                    💬 {pedido.comentarios}
+                  </div>
+                )}
 
                 <button
                   className="eliminar-pedido-btn"
