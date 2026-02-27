@@ -34,7 +34,7 @@
 .toolbar-filtros-entrega .toolbar-btn {
   background: #2a2a2a87;
   color: #ccc;
-  border: 1px solid #333;
+  border: 1px solid #121212;
   transition: 0.2s ease;
 }
 
@@ -102,7 +102,7 @@
 
 .pedido-envio {
   border-left: 6px solid var(--color-rojo);
-  background: rgba(164, 28, 28, 0.46);
+  background: rgba(142, 18, 18, 0.472);
 }
 
 /* ================= HEADER ================= */
@@ -203,15 +203,15 @@
 }
 
 .toolbar-btn.limpiar {
-  background: #333;
+  background: #121212;
   color: white;
 }
 
 .toolbar-select {
   padding: 6px 10px;
   border-radius: 0.5rem;
-  border: 1px solid #222;
-  background: #333;
+  border: 1px solid #121212;
+  background: #121212;
   color: white;
   font-size: 0.8rem;
 }
@@ -223,8 +223,8 @@
 
 /* ================= ENVÍO BOX ================= */
 .pedido-envio-box {
-  background: #111;
-  border: 1px solid #333;
+  background: #111111a3;
+  border: 1px solid #121212;
   padding: 10px;
   border-radius: 8px;
   margin: 8px 0;
@@ -238,7 +238,7 @@
 
 /* ================= COMENTARIOS ================= */
 .pedido-comentarios {
-  background: #222;
+  background: #121212;
   padding: 6px 8px;
   border-radius: 6px;
   font-size: 0.75rem;
