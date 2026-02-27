@@ -1,0 +1,94 @@
+/* ================= BASE SIDEBAR ================= */
+
+.sidebar-stats {
+  width: 100%;
+  padding: 18px;
+  background: transparent;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+/* ================= HEADER ================= */
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.sidebar-header h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.sidebar-header span {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+/* ================= CARD BASE ================= */
+
+.sidebar-card {
+  background: #111;
+  border-radius: 14px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: 0.2s ease;
+}
+
+.sidebar-card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: #1a1a1f;
+}
+
+.card-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* ================= INGRESOS ================= */
+
+.ingresos-card .card-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+/* ================= EMPTY ================= */
+
+.empty-mini {
+  font-size: 0.75rem;
+  color: #666;
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* ================= FOOTER MINI KPIs ================= */
+
+.sidebar-footer {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-footer span {
+  display: block;
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.sidebar-footer strong {
+  font-size: 0.95rem;
+  font-weight: 600;
+}

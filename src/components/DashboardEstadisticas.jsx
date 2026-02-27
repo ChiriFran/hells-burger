@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useMesasContext } from "../context/MesaContext";
-import EstadisticasModal from "./EstadisticasModal";
+import DashboardEstadisticasAvanzado from "./DashboardEstadisticasAvanzado";
 import "../styles/dashboardEstadisticas.css";
 
 export default function DashboardEstadisticas() {
   const { mesas = [], pedidos = [] } = useMesasContext();
-
   const [stats, setStats] = useState({});
   const [modoDiario, setModoDiario] = useState(true);
-
-  // ✅ ESTADO DEL MODAL (ESTO FALTABA)
-  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     const hoy = new Date();
@@ -20,34 +16,32 @@ export default function DashboardEstadisticas() {
 
     const pedidosFiltrados = modoDiario
       ? pedidos.filter((p) => {
-        if (!p.horaCierre) return false;
+          if (!p.horaInicio) return false;
 
-        const fechaCierre = p.horaCierre.toDate
-          ? p.horaCierre.toDate()
-          : new Date(p.horaCierre);
+          const fechaInicio = p.horaInicio.toDate
+            ? p.horaInicio.toDate()
+            : new Date(p.horaInicio);
 
-        return (
-          fechaCierre.getFullYear() === hoyAnio &&
-          fechaCierre.getMonth() === hoyMes &&
-          fechaCierre.getDate() === hoyDia
-        );
-      })
+          return (
+            fechaInicio.getFullYear() === hoyAnio &&
+            fechaInicio.getMonth() === hoyMes &&
+            fechaInicio.getDate() === hoyDia
+          );
+        })
       : pedidos;
 
     const libres = mesas.filter((m) => m.estado === "libre").length;
     const ocupadas = mesas.filter((m) => m.estado === "ocupada").length;
-
     const activos = pedidosFiltrados.filter(
-      (p) => p.estado !== "pagado"
+      (p) => p.estado !== "pagado",
     ).length;
-
     const completados = pedidosFiltrados.filter(
-      (p) => p.estado === "pagado"
+      (p) => p.estado === "pagado",
     ).length;
 
     const totalProductos = pedidosFiltrados.reduce(
       (acc, p) => acc + (p.productos?.length || 0),
-      0
+      0,
     );
 
     const ingresos = pedidosFiltrados
@@ -72,62 +66,11 @@ export default function DashboardEstadisticas() {
     });
   }, [mesas, pedidos, modoDiario]);
 
-  const items = [
-    {
-      label: "Mesas libres",
-      value: stats.libres || 0,
-      icon: "🪑",
-      className: "libres",
-    },
-    {
-      label: "Mesas ocupadas",
-      value: stats.ocupadas || 0,
-      icon: "👥",
-      className: "ocupadas",
-    },
-    {
-      label: "Pedidos activos",
-      value: stats.activos || 0,
-      icon: "📋",
-      className: "activos",
-    },
-    {
-      label: "Pedidos completados",
-      value: stats.completados || 0,
-      icon: "✅",
-      className: "completados",
-    },
-    {
-      label: "Productos vendidos",
-      value: stats.totalProductos || 0,
-      icon: "🛍️",
-      className: "productos",
-    },
-    {
-      label: "Ticket promedio",
-      value: `$${stats.promedioTicket?.toFixed(2) || "0.00"}`,
-      icon: "📈",
-      className: "ticket",
-    },
-    {
-      label: modoDiario ? "Ingresos del día" : "Ingresos totales",
-      value: `$${stats.ingresos?.toFixed(2) || "0.00"}`,
-      icon: "💰",
-      className: "ingresos",
-    },
-    {
-      label: modoDiario ? "Efectivo del día" : "Total efectivo",
-      value: `$${stats.efectivoTotal?.toFixed(2) || "0.00"}`,
-      icon: "💵",
-      className: "efectivo",
-    },
-  ];
-
   return (
     <div className="dashboard">
       <div className="dashboard-header">
         <h2 className="dashboard-title">
-          Estadísticas {modoDiario ? "del Día" : "Generales"}
+          📊 Estadísticas {modoDiario ? "del Día" : "Generales"}
         </h2>
 
         <button
@@ -138,33 +81,7 @@ export default function DashboardEstadisticas() {
         </button>
       </div>
 
-      <div className="dashboard-grid">
-        {items.map((item, i) => (
-          <div key={i} className={`dashboard-card ${item.className}`}>
-            <div className="dashboard-icon">{item.icon}</div>
-            <div className="dashboard-info">
-              <span className="dashboard-value">{item.value}</span>
-              <span className="dashboard-label">{item.label}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* BOTÓN MODAL */}
-      <button
-        className="dashboard-stats-open-btn"
-        onClick={() => setOpenModal(true)}
-      >
-        Ver estadísticas detalladas 📊
-      </button>
-
-      {/* MODAL */}
-      <EstadisticasModal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        stats={stats}
-        modoDiario={modoDiario}
-      />
+      <DashboardEstadisticasAvanzado stats={stats} modoDiario={modoDiario} />
     </div>
   );
 }
