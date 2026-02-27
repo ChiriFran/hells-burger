@@ -1,92 +1,119 @@
-/* Wrapper para scroll horizontal en mobile */
+/* ================= WRAPPER SCROLL ================= */
+
 .mesas-board-wrapper {
   width: 100%;
   overflow-x: auto;
-  /* Scroll horizontal */
   -webkit-overflow-scrolling: touch;
-  /* Para smooth scrolling en iOS */
-  padding: 10px 0;
+  padding: 14px 0;
 }
 
-/* Contenedor de mesas */
+.mesas-board-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.mesas-board-wrapper::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 999px;
+}
+
+/* ================= CONTENEDOR MESAS ================= */
+
 .mesas-board-container {
   display: flex;
-  gap: 15px;
+  gap: 18px;
   justify-content: flex-start;
   flex-wrap: wrap;
-  /* Para pantallas grandes, las mesas pueden saltar de fila */
   box-sizing: border-box;
 }
 
+/* ================= ESTADO VACIO ================= */
+
 .mesas-empty {
-  margin-top: 20px;
-  padding: 16px;
-  border-radius: 0.5rem;
-  border: 1px solid var(--color-letra);
-  box-shadow: 0 4px 14px var(--color-rojo);
-  background-color: var(--color-letra);
-  color: var(--color-fondo);
-  max-width: 400px;
+  margin-top: 24px;
+  padding: 22px;
+  border-radius: 18px;
+  background: #121212;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  max-width: 420px;
   text-align: center;
-  font-family: monospace;
-  transition: 0.3s;
+  transition: 0.25s ease;
 }
 
 .mesas-empty:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+  transform: translateY(-3px);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.75);
 }
 
 .mesas-empty p {
-  font-size: 0.95rem;
-  opacity: 0.85;
-  margin-bottom: 12px;
+  font-size: 14px;
+  opacity: 0.7;
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
 }
 
+/* ================= BOTON SYNC ================= */
+
 .btn-sync {
-  padding: 10px 14px;
+  padding: 12px 18px;
   border: none;
-  border-radius: 8px;
-  background: var(--color-rojo);
-  color: var(--color-fondo);
-  font-weight: 500;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 1px;
   cursor: pointer;
-  font-family: monospace;
-  transition: 0.25s;
+  background: linear-gradient(135deg, #c62828, #e53935);
+  color: white;
+  transition: all 0.2s ease;
 }
 
 .btn-sync:hover {
-  background: #ff6a5f;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(229, 57, 53, 0.35);
 }
 
 .btn-sync:active {
   transform: translateY(0);
 }
 
+/* ================= LOADING ================= */
+
 .mesas-loading {
-  width: 50%;
-  margin-top: 20px;
-  padding: 14px;
-  border-radius: 0.5rem;
-  border: 7px dashed var(--color-rojo);
-  color: var(--color-fondo);
-  opacity: 0.7;
-  font-family: monospace;
-  text-align: center;
+  width: fit-content;
+  margin-top: 28px;
+  padding: 16px 22px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #aaa;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  animation: pulseLoading 1.6s infinite ease-in-out;
 }
 
-/* Responsive: pantallas medianas */
-@media (max-width: 900px) {
-  .mesas-board-container {
-    gap: 12px;
+@keyframes pulseLoading {
+  0% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0.4;
   }
 }
 
-/* Responsive: pantallas pequeñas (mobile) */
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 900px) {
+  .mesas-board-container {
+    gap: 14px;
+  }
+}
+
 @media (max-width: 600px) {
   .mesas-board-container {
     flex-wrap: nowrap;
-    /* Una fila horizontal con scroll */
   }
 }
