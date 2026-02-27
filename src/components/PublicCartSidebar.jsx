@@ -261,7 +261,22 @@ export default function PublicCartSidebar() {
 
               <a
                 className="checkout-wsp-btn"
-                href={`https://wa.me/${WHATSAPP}?text=Pedido%20${pedidoCreado.pedidoId}%20-%20Total%20$${total}`}
+                href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(
+                  `Hola! Te envío el comprobante de pago.
+
+📦 Pedido ID: ${pedidoCreado.id}
+👤 Cliente: ${pedidoCreado.cliente}
+🚚 Entrega: ${
+                    pedidoCreado.tipoEntrega === "retiro"
+                      ? "Retiro en local"
+                      : "Envío a domicilio"
+                  }
+💲 Total: $${pedidoCreado.total}
+
+Por favor adjunto el comprobante de transferencia en este mensaje para confirmar el pedido.
+
+Muchas gracias 🙌`,
+                )}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
