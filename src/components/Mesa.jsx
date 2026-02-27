@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useMesasContext } from "../context/MesaContext";
 import "../styles/mesa.css";
 
@@ -6,8 +6,16 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
   const { borrarMesa, pedidos, marcarDespachado } = useMesasContext();
 
   const [tiempoTranscurrido, setTiempoTranscurrido] = useState("00:00");
+  const [despachado, setDespachado] = useState(false);
 
   const handleClick = () => setMesaSeleccionada(mesa);
+
+  /* ================= PEDIDO ACTUAL ================= */
+  const pedido = useMemo(() => {
+    return pedidos.find((p) => p.id === mesa.pedidoActual);
+  }, [pedidos, mesa.pedidoActual]);
+
+  const items = pedido?.productos || [];
 
   /* ================= BORRAR MESA ================= */
   const handleBorrar = async (e) => {
@@ -18,7 +26,7 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
       return;
     }
 
-    if (confirm(`¿Eliminar la mesa ${mesa.numero}?`)) {
+    if (window.confirm(`¿Eliminar la mesa ${mesa.nombre}?`)) {
       try {
         await borrarMesa(mesa);
       } catch (err) {
@@ -27,23 +35,11 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
     }
   };
 
-  /* ================= CLASES DE ESTADO ================= */
-  const claseEstado =
-    mesa.estado === "libre"
-      ? "mesa-libre"
-      : mesa.estado === "ocupada"
-        ? "mesa-ocupada"
-        : "mesa-reservada";
-
-  /* ================= PEDIDO ================= */
-  const pedido = pedidos?.find((p) => p.id === mesa.pedidoActual);
-  const items = pedido?.productos || [];
-
   /* ================= TIMER ================= */
   useEffect(() => {
     if (!pedido?.horaInicio) return;
 
-    const inicio = pedido.horaInicio.toDate?.() || new Date(pedido.horaInicio);
+    const inicio = pedido.horaInicio?.toDate?.() || new Date(pedido.horaInicio);
 
     const intervalo = setInterval(() => {
       const diff = Math.floor((new Date() - inicio) / 1000);
@@ -55,8 +51,6 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
     return () => clearInterval(intervalo);
   }, [pedido]);
 
-  const [despachado, setDespachado] = useState(false);
-
   /* ================= SINCRONIZAR DESPACHADO ================= */
   useEffect(() => {
     if (pedido?.despachado !== undefined) {
@@ -67,18 +61,29 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
   /* ================= DESPACHAR ================= */
   const toggleDespachado = async (e) => {
     e.stopPropagation();
+
+    if (!pedido) return;
+
     const nuevo = !despachado;
     setDespachado(nuevo);
 
-    if (pedido) {
-      try {
-        await marcarDespachado(pedido.id, nuevo);
-      } catch (e) {
-        console.error("Error despachando:", e);
-        setDespachado(!nuevo); // rollback UI
-      }
+    try {
+      await marcarDespachado(pedido.id, nuevo);
+    } catch (error) {
+      console.error("Error al despachar:", error);
+      setDespachado(!nuevo); // rollback visual
     }
   };
+
+  /* ================= CLASE VISUAL ================= */
+  const claseEstado =
+    mesa.estado === "libre"
+      ? "mesa-libre"
+      : mesa.estado === "ocupada"
+        ? "mesa-ocupada"
+        : "mesa-default";
+
+  const estadoPedido = pedido?.estado || null;
 
   return (
     <div onClick={handleClick} className={`mesa-card ${claseEstado}`}>
@@ -93,21 +98,35 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
         )}
       </div>
 
+      {/* NOMBRE */}
       <h3 className="mesa-nombre">{mesa.nombre}</h3>
 
+      {/* ESTADO */}
       <div className="mesa-body">
-        <span className="mesa-estado">{mesa.estado}</span>
+        <span className="mesa-estado">
+          {mesa.estado === "libre" && "Libre"}
+          {mesa.estado === "ocupada" && "Ocupada"}
+        </span>
+
+        {estadoPedido && (
+          <span className={`pedido-estado estado-${estadoPedido}`}>
+            {estadoPedido}
+          </span>
+        )}
       </div>
 
-      {/* ICONOS PEDIDOS (LIMITADO) */}
+      {/* ICONOS PEDIDO */}
       {items.length > 0 && (
         <div className="mesa-pedidos-icons">
-          {items.slice(0, 6).map((item, index) => (
-            <span key={index} className="icono-hamburguesa">
+          {items.slice(0, 5).map((item, index) => (
+            <span key={index} className="icono-item">
               🍔 x{item.cantidad || 1}
             </span>
           ))}
-          {items.length > 6 && <span>+{items.length - 6}</span>}
+
+          {items.length > 5 && (
+            <span className="icono-mas">+{items.length - 5}</span>
+          )}
         </div>
       )}
 

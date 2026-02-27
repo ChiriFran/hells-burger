@@ -2,11 +2,10 @@ import { useState } from "react";
 import { usePublicCart } from "../context/PublicCartContext";
 import { useMesasContext } from "../context/MesaContext";
 import "../styles/publicCart.css";
-import { db } from "../firebase/config";
-import { deleteDoc, doc } from "firebase/firestore";
 
 export default function PublicCartSidebar() {
-  const { crearMesaPublica, crearPedidoMesa } = useMesasContext();
+  // 🔥 CAMBIO ACÁ
+  const { crearMesa, crearPedido } = useMesasContext();
 
   const {
     items,
@@ -50,10 +49,9 @@ export default function PublicCartSidebar() {
     try {
       setLoading(true);
 
-      // 1️⃣ Crear mesa fake para público
-      mesaCreada = await crearMesaPublica(nombreMesa.trim());
+      // 🔥 AHORA USA crearMesa REAL
+      mesaCreada = await crearMesa(nombreMesa.trim());
 
-      // 2️⃣ Productos
       const productos = items.map((item) => ({
         nombre: item.titulo,
         cantidad: item.qty,
@@ -63,20 +61,18 @@ export default function PublicCartSidebar() {
         comentarioProducto: item.comentarioProducto || "",
       }));
 
-      // 3️⃣ 🔥 PEDIDO DATA COMPLETO (ESTA ERA LA CLAVE)
-      const pedidoData = {
+      // 🔥 AHORA USA crearPedido UNIFICADO
+      const pedidoId = await crearPedido({
+        mesa: mesaCreada,
         productos,
-        envio,
-        tipoEntrega,
-        comentarios,
         total,
+        tipoEntrega,
+        envio: tipoEntrega === "envio" ? envio : null,
+        comentarios,
         cliente: nombreMesa,
-      };
+        tipo: "publico",
+      });
 
-      // 4️⃣ Crear pedido
-      const pedidoId = await crearPedidoMesa(mesaCreada, pedidoData);
-
-      // 5️⃣ Guardar en contexto
       setPedidoCreado({
         id: pedidoId,
         total,
@@ -87,11 +83,6 @@ export default function PublicCartSidebar() {
     } catch (error) {
       console.error("ERROR PEDIDO:", error);
       alert(error.message || "Error al crear pedido");
-
-      if (mesaCreada?.id) {
-        await deleteDoc(doc(db, "mesas", mesaCreada.id));
-        console.warn("Mesa rollback eliminada");
-      }
     } finally {
       setLoading(false);
     }
@@ -155,7 +146,6 @@ export default function PublicCartSidebar() {
         {/* FORMULARIO */}
         {step === "cart" && items.length > 0 && (
           <>
-            {/* Nombre */}
             <div className="mesa-nombre-input">
               <label>Nombre</label>
               <input
@@ -166,7 +156,6 @@ export default function PublicCartSidebar() {
               />
             </div>
 
-            {/* Entrega */}
             <div className="entrega-selector">
               <button
                 className={tipoEntrega === "retiro" ? "active" : ""}
@@ -182,7 +171,6 @@ export default function PublicCartSidebar() {
               </button>
             </div>
 
-            {/* Envío */}
             {tipoEntrega === "envio" && (
               <div className="envio-form">
                 <label>
@@ -217,7 +205,6 @@ export default function PublicCartSidebar() {
               </div>
             )}
 
-            {/* Comentarios */}
             <div className="comentarios-box">
               <label>Comentarios</label>
               <textarea
@@ -284,14 +271,13 @@ Muchas gracias 🙌`,
               </a>
 
               <p className="checkout-id">
-                Pedido ID: <strong>{pedidoCreado.pedidoId}</strong>
+                Pedido ID: <strong>{pedidoCreado.id}</strong>
               </p>
             </div>
           </div>
         )}
       </div>
 
-      {/* FOOTER */}
       <footer className="public-cart-footer">
         {step === "cart" && (
           <>

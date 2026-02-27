@@ -8,8 +8,8 @@ export default function PedidoModal({ mesa, cerrarModal }) {
   // 🔥 PEDIDOS SOLO PARA CONSULTAS
   const { obtenerPedidoPorId, agregarProductosAlPedido } = usePedidos();
 
-  // 🔥 MESAS CONTEXT = CREAR Y CERRAR
-  const { crearPedidoMesa, cerrarPedidoSeguro } = useMesasContext();
+  // 🔥 MESAS CONTEXT = CREAR Y CERRAR (CORREGIDO)
+  const { crearPedido, cerrarPedido } = useMesasContext();
 
   const { productos: productosDisponibles } = useProductos();
 
@@ -124,6 +124,7 @@ export default function PedidoModal({ mesa, cerrarModal }) {
   // ===================== SUBTOTAL =====================
   const calcularSubtotal = (p) => {
     const base = p.usarDoble && p.precioDoble ? p.precioDoble : p.precio;
+
     const extrasTotal =
       (p.extras?.carne || 0) * EXTRA_PRICE +
       (p.extras?.cheddar ? EXTRA_PRICE : 0) +
@@ -132,7 +133,6 @@ export default function PedidoModal({ mesa, cerrarModal }) {
     return (base + extrasTotal) * p.cantidad;
   };
 
-  // ===================== UPDATE =====================
   const updateProducto = (index, changes) => {
     setProductos((prev) =>
       prev.map((p, i) => (i === index ? { ...p, ...changes } : p)),
@@ -169,7 +169,11 @@ export default function PedidoModal({ mesa, cerrarModal }) {
         subtotal: calcularSubtotal(p),
       }));
 
-      await crearPedidoMesa(mesa, productosFinal);
+      await crearPedido({
+        mesa,
+        productos: productosFinal,
+        total,
+      });
 
       cerrarModal();
     } finally {
@@ -192,7 +196,7 @@ export default function PedidoModal({ mesa, cerrarModal }) {
     lockRef.current = true;
 
     try {
-      await cerrarPedidoSeguro(mesa.pedidoActual, medioPago);
+      await cerrarPedido(mesa.pedidoActual, medioPago);
       cerrarModal();
     } finally {
       setSubmitting(false);
