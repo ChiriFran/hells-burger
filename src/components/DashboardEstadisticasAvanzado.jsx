@@ -9,7 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import "../styles/DashboardEstadisticasAvanzado.css";
+import "../styles/dashboardEstadisticasAvanzado.css";
 
 const COLORS = ["#1e7e34", "#c62828"];
 
