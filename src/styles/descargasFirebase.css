@@ -1,74 +1,131 @@
+/* ================= CARD BASE ================= */
+
 .descargas-firebase-card {
-    border-radius: 14px;
-    padding: 16px;
-    margin-top: 16px;
-    color: var(--color-fondo);
+  margin-top: 20px;
+  padding: 5px;
+  border-radius: 18px;
+  background: transparent;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
+
+/* ================= TITLE ================= */
 
 .descargas-firebase-title {
-    font-size: 1.4rem;
-    font-family: monospace;
-    margin-bottom: 12px;
-    color: var(--color-letra);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 18px;
+  color: #fff;
 }
+
+/* ================= ROW ================= */
 
 .descargas-firebase-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--color-letra);
-    box-shadow: 0 6px 18px var(--color-rojo);
-    border-radius: 0.5rem;
-    padding: 10px 12px;
-    margin-bottom: 20px;
-    font-family: monospace;
-    font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #111;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: 0.2s ease;
 }
+
+.descargas-firebase-row:hover {
+  background: #1b1b1b;
+  border-color: rgba(255, 255, 255, 0.171);
+}
+
+/* ================= LABEL ================= */
 
 .descargas-firebase-label {
-    font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
 }
+
+/* ================= BUTTON GROUP ================= */
 
 .descargas-firebase-btn-group {
-    display: flex;
-    gap: 8px;
+  display: flex;
+  gap: 8px;
 }
 
+/* ================= BUTTON BASE ================= */
+
 .descargas-firebase-btn {
-    padding: 6px 10px;
-    border-radius: 0.2rem;
-    border: none;
-    background: var(--color-rojo);
-    color: var(--color-letra);
-    cursor: pointer;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #1c1c22;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
 .descargas-firebase-btn:hover {
-    background: #e76a6a;
+  background: #262630;
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
-.descargas-firebase-btn:disabled {
-    opacity: 0.5;
+/* Variante PDF */
+.descargas-firebase-btn:first-child {
+  background: rgba(242, 22, 59, 0.15);
+  border: 1px solid rgba(243, 33, 96, 0.3);
+  color: #dd1529;
 }
+
+.descargas-firebase-btn:first-child:hover {
+  background: rgba(33, 150, 243, 0.25);
+}
+
+/* Variante Excel */
+.descargas-firebase-btn:last-child {
+  background: rgba(76, 175, 80, 0.15);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  color: #4caf50;
+}
+
+.descargas-firebase-btn:last-child:hover {
+  background: rgba(76, 175, 80, 0.25);
+}
+
+/* Disabled */
+.descargas-firebase-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ================= LOADING ================= */
 
 .descargas-firebase-loading {
-    font-size: 0.8rem;
-    color: #aaa;
+  margin-top: 12px;
+  font-size: 0.8rem;
+  color: #777;
+  text-align: center;
 }
 
-/* Responsive */
+/* ================= RESPONSIVE ================= */
+
 @media (max-width: 600px) {
-    .descargas-firebase-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
+  .descargas-firebase-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
 
-    .descargas-firebase-btn-group {
-        width: 100%;
-    }
+  .descargas-firebase-btn-group {
+    width: 100%;
+  }
 
-    .descargas-firebase-btn {
-        flex: 1;
-    }
+  .descargas-firebase-btn {
+    flex: 1;
+  }
 }

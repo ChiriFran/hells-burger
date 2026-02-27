@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { useCaja } from "../hooks/useCaja";
-import CajaEstadisticasModal from "./CajaEstadisticasModal";
 import "../styles/caja.css";
 
 export default function Caja() {
-  const { caja, cajas, agregarGasto, cerrarCaja } = useCaja();
+  const { caja, agregarGasto, cerrarCaja } = useCaja();
 
   const [montoGasto, setMontoGasto] = useState("");
   const [descGasto, setDescGasto] = useState("");
-  const [openStats, setOpenStats] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const totalCierre = (caja?.ingresos || 0) - (caja?.gastos || 0);
@@ -107,22 +105,7 @@ export default function Caja() {
         <button className="btn-cerrar-caja" onClick={handleCerrarCaja}>
           🔒 Cerrar caja
         </button>
-
-        <button
-          className="dashboard-stats-open-btn"
-          onClick={() => setOpenStats(true)}
-        >
-          📊 Ver estadísticas
-        </button>
       </section>
-
-      {/* MODAL */}
-      <CajaEstadisticasModal
-        open={openStats}
-        onClose={() => setOpenStats(false)}
-        caja={caja}
-        cajas={cajas}
-      />
     </div>
   );
 }

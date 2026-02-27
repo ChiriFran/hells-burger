@@ -1,164 +1,180 @@
+/* ================= CONTAINER ================= */
+
 .caja-container {
   margin-top: 20px;
-  padding: 20px;
-  border-radius: 14px;
-  font-family: monospace;
+  padding: 5px;
+  border-radius: 18px;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  background: transparent;
 }
 
+/* ================= TITLE ================= */
+
 .caja-title {
-  font-size: 1.4rem;
-  margin-bottom: 16px;
-  color: var(--color-letra);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 18px;
+  color: #fff;
 }
+
+/* ================= CARDS GRID ================= */
 
 .caja-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 14px;
-  margin-bottom: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
 }
+
+/* ================= CARD BASE ================= */
 
 .caja-card {
   display: flex;
-  flex-flow: row;
   align-items: center;
-  background: var(--color-letra);
-  border-radius: 12px;
-  padding: 14px;
-  display: flex;
-  align-items: center;
-  margin: 0;
-  box-shadow: 0 6px 18px var(--color-rojo);
-  transition: 0.4s;
+  gap: 14px;
+  background: #111;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: 0.2s ease;
 }
 
 .caja-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
-  transition: 0.2s;
+  background: #1b1b22;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
+/* ================= ICON ================= */
+
 .caja-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: #f0f0f0;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
-  margin-right: 1rem;
+  font-size: 1.2rem;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ================= TEXT ================= */
+
+.caja-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  display: block;
+  margin-bottom: 4px;
 }
 
 .caja-value {
-  display: block;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #111;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
 }
 
-.caja-label {
-  font-size: 0.85rem;
-  color: #666;
-}
+/* ================= COLOR VARIANTS ================= */
 
-/* Colores por tipo */
 .ingresos .caja-icon {
-  background: #e8f5e9;
+  background: rgba(76, 175, 80, 0.15);
+  color: #4caf50;
 }
 
 .gastos .caja-icon {
-  background: #fff3e0;
+  background: rgba(255, 152, 0, 0.15);
+  color: #ff9800;
 }
 
 .cierre .caja-icon {
-  background: #e3f2fd;
+  background: rgba(33, 150, 243, 0.15);
+  color: #2196f3;
 }
 
-.cierre {
-  display: flex;
-  width: 100%;
-}
+/* ================= ACTIONS ================= */
 
-/* Botones */
 .caja-actions {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.btn-gasto {
-  width: 50%;
-  padding: 10px 14px;
-  border: none;
-  border-radius: 8px;
-  background: #4caf50;
-  color: white;
-  font-weight: 500;
+/* ================= BUTTON BASE ================= */
+
+.btn-gasto,
+.btn-cerrar-caja {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #1c1c22;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.85rem;
   cursor: pointer;
+  transition: 0.2s ease;
 }
 
 .btn-gasto:hover {
-  background: #857241;
+  background: #262630;
 }
 
-/* gastos */
+.btn-cerrar-caja {
+  background: rgba(211, 47, 47, 0.15);
+  border: 1px solid rgba(211, 47, 47, 0.3);
+  color: #ff5252;
+}
+
+.btn-cerrar-caja:hover {
+  background: rgba(211, 47, 47, 0.25);
+}
+
+/* ================= GASTO PERSONALIZADO ================= */
+
 .gasto-personalizado {
   display: flex;
-  width: 100%;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
-  flex-flow: row;
-  justify-content: space-between;
+  margin-top: 10px;
 }
 
 .gasto-personalizado input {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid var(--color-rojo);
-  min-width: 120px;
-  font-size: 0.95rem;
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #1a1a1f;
+  color: #fff;
+  font-size: 0.85rem;
+  transition: 0.2s ease;
 }
 
 .gasto-personalizado input:focus {
   outline: none;
-  border-color: var(--color-rojo);
-  box-shadow: 0 0 0 2px rgba(255, 179, 0, 0.2);
+  border-color: #4caf50;
+  background: #202028;
 }
 
-.btn-cerrar-caja {
-  display: block;
-  width: 100%;
-  padding: 10px 14px;
-  border: none;
-  border-radius: 8px;
-  background: #d32f2f;
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.btn-cerrar-caja:hover {
-  background: #e53935;
-}
+/* ================= OPEN BUTTON ================= */
 
 .dashboard-stats-open-btn {
-  font-size: 0.8rem;
-  font-family: monospace;
-  font-weight: 900;
   width: 100%;
-  padding: 10px 16px;
-  border-radius: 0.5rem;
-  background: var(--color-letra);
-  color: var(--color-fondo);
-  border: none;
-  box-shadow: 0 6px 18px var(--color-rojo);
+  padding: 12px;
+  border-radius: 12px;
+  background: #15151a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.8rem;
   cursor: pointer;
-  transition: .4s;
+  transition: 0.2s ease;
 }
 
 .dashboard-stats-open-btn:hover {
-  background: var(--color-rojo);
-  color: var(--color-letra);
-  transition: .4s;
+  background: #1c1c22;
+  border-color: rgba(255, 255, 255, 0.15);
 }
