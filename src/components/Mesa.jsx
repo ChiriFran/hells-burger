@@ -87,9 +87,14 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
 
   return (
     <div onClick={handleClick} className={`mesa-card ${claseEstado}`}>
-      {/* HEADER */}
-      <div className="mesa-header">
-        <span className="icono-mesa">🪑</span>
+      {/* HEADER SUPERIOR */}
+      <div className="mesa-top">
+        <div className="mesa-info">
+          <span className="mesa-nombre">{mesa.nombre}</span>
+          <span className={`mesa-badge badge-${mesa.estado}`}>
+            {mesa.estado === "libre" ? "LIBRE" : "OCUPADA"}
+          </span>
+        </div>
 
         {mesa.estado === "libre" && !mesa.pedidoActual && (
           <button onClick={handleBorrar} className="mesa-borrar">
@@ -98,50 +103,47 @@ export default function Mesa({ mesa, setMesaSeleccionada }) {
         )}
       </div>
 
-      {/* NOMBRE */}
-      <h3 className="mesa-nombre">{mesa.nombre}</h3>
-
-      {/* ESTADO */}
-      <div className="mesa-body">
-        <span className="mesa-estado">
-          {mesa.estado === "libre" && "Libre"}
-          {mesa.estado === "ocupada" && "Ocupada"}
-        </span>
-
-        {estadoPedido && (
-          <span className={`pedido-estado estado-${estadoPedido}`}>
-            {estadoPedido}
-          </span>
-        )}
-      </div>
-
-      {/* ICONOS PEDIDO */}
-      {items.length > 0 && (
-        <div className="mesa-pedidos-icons">
-          {items.slice(0, 5).map((item, index) => (
-            <span key={index} className="icono-item">
-              🍔 x{item.cantidad || 1}
+      {/* TIEMPO DESTACADO */}
+      {pedido && (
+        <div className="mesa-timer-box">
+          <span className="mesa-tiempo">{tiempoTranscurrido}</span>
+          {estadoPedido && (
+            <span className={`pedido-estado estado-${estadoPedido}`}>
+              {estadoPedido}
             </span>
-          ))}
-
-          {items.length > 5 && (
-            <span className="icono-mas">+{items.length - 5}</span>
           )}
         </div>
       )}
 
-      {/* FOOTER */}
-      {pedido && (
-        <div className="mesa-footer">
-          <span className="mesa-tiempo">{tiempoTranscurrido}</span>
+      {/* RESUMEN PEDIDO */}
+      {items.length > 0 && (
+        <div className="mesa-resumen">
+          <span className="mesa-cantidad">
+            {items.length} producto{items.length > 1 && "s"}
+          </span>
 
-          <button
-            className={`mesa-despachado ${despachado ? "marcado" : ""}`}
-            onClick={toggleDespachado}
-          >
-            {despachado ? "✅ Entregado" : "🚚 Despachar"}
-          </button>
+          <div className="mesa-pedidos-icons">
+            {items.slice(0, 3).map((item, index) => (
+              <span key={index} className="icono-item">
+                🍔 x{item.cantidad || 1}
+              </span>
+            ))}
+
+            {items.length > 3 && (
+              <span className="icono-mas">+{items.length - 3}</span>
+            )}
+          </div>
         </div>
+      )}
+
+      {/* BOTÓN ACCIÓN */}
+      {pedido && (
+        <button
+          className={`mesa-despachado ${despachado ? "marcado" : ""}`}
+          onClick={toggleDespachado}
+        >
+          {despachado ? "✓ ENTREGADO" : "DESPACHAR"}
+        </button>
       )}
     </div>
   );

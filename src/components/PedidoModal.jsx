@@ -341,40 +341,48 @@ export default function PedidoModal({ mesa, cerrarModal }) {
             </>
           )}
 
-          {/* AGREGAR */}
+          {/* ===================== AGREGAR ===================== */}
           <div className="pedido-form-card">
-            <h4>Agregar producto</h4>
+            <h4 className="section-title-main">Agregar productos</h4>
 
+            {/* ACCIÓN PRINCIPAL */}
             <button
-              className="btn-secundario"
+              className="btn-principal-productos"
               onClick={() => setShowProductos(true)}
             >
-              📦 Elegir de productos
+              + Elegir de productos
             </button>
 
-            <div className="pedido-form">
-              <input
-                placeholder="Producto"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-              />
-              <input
-                type="number"
-                placeholder="Precio"
-                value={precio}
-                onChange={(e) => setPrecio(e.target.value)}
-              />
-              <input
-                type="number"
-                min="1"
-                value={cantidad}
-                onChange={(e) => setCantidad(e.target.value)}
-              />
+            {/* OPCIÓN SECUNDARIA */}
+            <details className="manual-box">
+              <summary>Carga manual</summary>
 
-              <button onClick={agregarProducto} disabled={submitting}>
-                ➕ Agregar
-              </button>
-            </div>
+              <div className="pedido-form">
+                <input
+                  placeholder="Nombre del producto"
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
+                />
+
+                <input
+                  type="number"
+                  placeholder="Precio"
+                  value={precio}
+                  onChange={(e) => setPrecio(e.target.value)}
+                />
+
+                <input
+                  type="number"
+                  min="1"
+                  value={cantidad}
+                  onChange={(e) => setCantidad(e.target.value)}
+                />
+
+                <button onClick={agregarProducto} disabled={submitting}>
+                  Agregar manual
+                </button>
+              </div>
+            </details>
           </div>
         </div>
 
