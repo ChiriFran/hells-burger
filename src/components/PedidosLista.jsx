@@ -15,6 +15,7 @@ export default function PedidosLista() {
   const [visibleCount, setVisibleCount] = useState(5);
   const [limpio, setLimpio] = useState(false);
   const [filtroTiempo, setFiltroTiempo] = useState("todos");
+  const [filtroEntrega, setFiltroEntrega] = useState("todos"); // 👈 nuevo
 
   useEffect(() => {
     const pedidosRef = collection(db, "pedidos");
@@ -50,24 +51,41 @@ export default function PedidosLista() {
     }
   };
 
-  // ⏱️ filtro por tiempo
   const ahora = Date.now();
+
+  // 🔥 FILTRO COMPLETO (tiempo + entrega)
   const pedidosFiltrados = pedidos.filter((pedido) => {
-    if (filtroTiempo === "todos") return true;
-    if (!pedido.horaInicio) return true;
+    // ⏱️ FILTRO TIEMPO
+    if (filtroTiempo !== "todos") {
+      if (!pedido.horaInicio) return true;
 
-    const pedidoTime = pedido.horaInicio.toMillis
-      ? pedido.horaInicio.toMillis()
-      : pedido.horaInicio;
+      const pedidoTime = pedido.horaInicio.toMillis
+        ? pedido.horaInicio.toMillis()
+        : pedido.horaInicio;
 
-    const diffMin = (ahora - pedidoTime) / 60000;
+      const diffMin = (ahora - pedidoTime) / 60000;
 
-    if (filtroTiempo === "10") return diffMin <= 10;
-    if (filtroTiempo === "60") return diffMin <= 60;
-    if (filtroTiempo === "120") return diffMin <= 120;
+      if (filtroTiempo === "10" && diffMin > 10) return false;
+      if (filtroTiempo === "60" && diffMin > 60) return false;
+      if (filtroTiempo === "120" && diffMin > 120) return false;
+    }
+
+    // 🚚 FILTRO ENTREGA (misma lógica que tu render)
+    if (filtroEntrega === "envio" && pedido.tipoEntrega !== "envio") {
+      return false;
+    }
+
+    if (filtroEntrega === "mesa" && pedido.tipoEntrega === "envio") {
+      return false;
+    }
 
     return true;
   });
+
+  // 📊 Contadores dinámicos
+  const totalEnvios = pedidos.filter((p) => p.tipoEntrega === "envio").length;
+
+  const totalMesas = pedidos.filter((p) => p.tipoEntrega !== "envio").length;
 
   const pedidosVisibles = limpio ? [] : pedidosFiltrados.slice(0, visibleCount);
 
@@ -91,6 +109,36 @@ export default function PedidosLista() {
           <option value="60">Última 1 hora</option>
           <option value="120">Últimas 2 horas</option>
         </select>
+
+        {/* 🔥 NUEVO FILTRO ENTREGA */}
+        <div className="toolbar-filtros-entrega">
+          <button
+            className={`toolbar-btn ${
+              filtroEntrega === "todos" ? "activo" : ""
+            }`}
+            onClick={() => setFiltroEntrega("todos")}
+          >
+            📋 Todos ({pedidos.length})
+          </button>
+
+          <button
+            className={`toolbar-btn ${
+              filtroEntrega === "envio" ? "activo" : ""
+            }`}
+            onClick={() => setFiltroEntrega("envio")}
+          >
+            🚚 Envío ({totalEnvios})
+          </button>
+
+          <button
+            className={`toolbar-btn ${
+              filtroEntrega === "mesa" ? "activo" : ""
+            }`}
+            onClick={() => setFiltroEntrega("mesa")}
+          >
+            🍽 Local ({totalMesas})
+          </button>
+        </div>
 
         <span className="toolbar-count">👀 {pedidosVisibles.length}</span>
       </div>

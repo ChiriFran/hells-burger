@@ -22,6 +22,54 @@
   font-style: italic;
 }
 
+/* ================= FILTRO ENTREGA ================= */
+.toolbar-filtros-entrega {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Botones base ya usan .toolbar-btn */
+
+.toolbar-filtros-entrega .toolbar-btn {
+  background: #2a2a2a87;
+  color: #ccc;
+  border: 1px solid #333;
+  transition: 0.2s ease;
+}
+
+/* Hover */
+.toolbar-filtros-entrega .toolbar-btn:hover {
+  background: #2a2a2a2d;
+  transform: translateY(-1px);
+}
+
+/* Activo general */
+.toolbar-filtros-entrega .toolbar-btn.activo {
+  font-weight: 600;
+  transform: scale(1.05);
+}
+
+/* Activo ENVÍO */
+.toolbar-filtros-entrega .toolbar-btn.activo:nth-child(2) {
+  background: var(--color-rojo);
+  color: white;
+  border-color: var(--color-rojo);
+}
+
+/* Activo LOCAL */
+.toolbar-filtros-entrega .toolbar-btn.activo:nth-child(3) {
+  background: var(--color-letra);
+  color: var(--color-fondo);
+  border-color: var(--color-letra);
+}
+
+/* Activo TODOS */
+.toolbar-filtros-entrega .toolbar-btn.activo:nth-child(1) {
+  background: #444444e5;
+  color: white;
+}
+
 /* ================= LISTA ================= */
 .pedidos-lista {
   list-style: none;
@@ -54,7 +102,7 @@
 
 .pedido-envio {
   border-left: 6px solid var(--color-rojo);
-  background: rgba(96, 95, 95, 0.112);
+  background: rgba(164, 28, 28, 0.46);
 }
 
 /* ================= HEADER ================= */
@@ -142,6 +190,7 @@
   gap: 8px;
   margin-bottom: 12px;
   align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
 }
 
@@ -154,7 +203,7 @@
 }
 
 .toolbar-btn.limpiar {
-  background: black;
+  background: #333;
   color: white;
 }
 
@@ -162,7 +211,7 @@
   padding: 6px 10px;
   border-radius: 0.5rem;
   border: 1px solid #222;
-  background: #000;
+  background: #333;
   color: white;
   font-size: 0.8rem;
 }
