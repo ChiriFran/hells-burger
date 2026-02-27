@@ -17,7 +17,16 @@ export default function PublicProductosModal({ product, onClose, onAdd }) {
 
   if (!product) return null;
 
-  /* ================= PRECIO BASE (BLINDADO) ================= */
+  /* ================= VALIDACIÓN DOBLE ================= */
+  const dobleDisponible = Number(product.precioDoble) > 0;
+
+  useEffect(() => {
+    if (!dobleDisponible && version === "doble") {
+      setVersion("simple");
+    }
+  }, [dobleDisponible]);
+
+  /* ================= PRECIO BASE ================= */
   const precioBase =
     Number(version === "doble" ? product.precioDoble : product.precio) || 0;
 
@@ -56,8 +65,8 @@ export default function PublicProductosModal({ product, onClose, onAdd }) {
   const extrasSeleccionados = [];
   if (extras.carne > 0)
     extrasSeleccionados.push(`Carne extra x${extras.carne}`);
-  if (extras.cheddar) extrasSeleccionados.push("Cheddar");
-  if (extras.papas) extrasSeleccionados.push("Papas con bacon");
+  if (extras.cheddar) extrasSeleccionados.push("Papas con Cheddar");
+  if (extras.papas) extrasSeleccionados.push("Papas con Bacon");
 
   const extrasLabel =
     extrasSeleccionados.length > 0
@@ -68,7 +77,7 @@ export default function PublicProductosModal({ product, onClose, onAdd }) {
   const handleAdd = () => {
     onAdd({
       ...product,
-      precio: precioFinal, // 👈 PRECIO FINAL ÚNICO
+      precio: precioFinal,
       version,
       titulo: `${product.titulo} (${
         version === "doble" ? "Doble" : "Simple"
@@ -112,6 +121,7 @@ export default function PublicProductosModal({ product, onClose, onAdd }) {
             <h4>Versión</h4>
 
             <div className="extra-row">
+              {/* SIMPLE */}
               <div
                 className={`extra-item small half ${
                   version === "simple" ? "active" : ""
@@ -124,17 +134,20 @@ export default function PublicProductosModal({ product, onClose, onAdd }) {
                 </span>
               </div>
 
-              <div
-                className={`extra-item small half ${
-                  version === "doble" ? "active" : ""
-                }`}
-                onClick={() => setVersion("doble")}
-              >
-                <p className="extra-title">Doble 🥩</p>
-                <span className="extra-price">
-                  ${Number(product.precioDoble) || 0}
-                </span>
-              </div>
+              {/* DOBLE (SOLO SI ESTÁ DISPONIBLE) */}
+              {dobleDisponible && (
+                <div
+                  className={`extra-item small half ${
+                    version === "doble" ? "active" : ""
+                  }`}
+                  onClick={() => setVersion("doble")}
+                >
+                  <p className="extra-title">Doble 🥩</p>
+                  <span className="extra-price">
+                    ${Number(product.precioDoble)}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
