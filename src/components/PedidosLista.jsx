@@ -219,18 +219,18 @@ ${ticket}
                 <div className="pedido-header">
                   <div className="pedido-mesa-nombre">
                     {pedido.tipoEntrega === "envio"
-                      ? "🚚 Envío"
+                      ? "🛵 Envío"
                       : `🍽 ${pedido.mesaNombre || pedido.mesaId}`}
                   </div>
 
-                  <span className={`pedido-estado ${pedido.estado}`}>
-                    {pedido.estado}
+                  <span className={`pedido-estado-lista ${pedido.estado}`}>
+                    💵 {pedido.estado}
                   </span>
                   <button
-                    className="imprimir-pedido-btn"
-                    onClick={() => imprimirPedido(pedido)}
+                    className="eliminar-pedido-btn"
+                    onClick={() => eliminarPedido(pedido.id)}
                   >
-                    🖨️
+                    ⚠️ Eliminar
                   </button>
                 </div>
 
@@ -266,12 +266,11 @@ ${ticket}
                     💬 {pedido.comentarios}
                   </div>
                 )}
-
                 <button
-                  className="eliminar-pedido-btn"
-                  onClick={() => eliminarPedido(pedido.id)}
+                  className="imprimir-pedido-btn"
+                  onClick={() => imprimirPedido(pedido)}
                 >
-                  ⚠️ Eliminar pedido
+                  🖨️
                 </button>
               </li>
             ))}

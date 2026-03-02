@@ -108,6 +108,7 @@
 /* ================= HEADER ================= */
 .pedido-header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
 }
@@ -117,14 +118,25 @@
   font-size: 0.95rem;
 }
 
-/* ================= ESTADO ================= */
-.pedido-estado {
+/* ================= mesa nombre ================= */
+.pedido-mesa-nombre {
   font-weight: 500;
   font-size: 0.75rem;
   text-transform: uppercase;
-  background-color: var(--color-letra);
-  color: var(--color-fondo);
-  padding: 4px 10px;
+  background-color: #121212;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 1rem;
+}
+
+/* ================= ESTADO ================= */
+.pedido-estado-lista {
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  background-color: #121212;
+  color: white;
+  padding: 5px 10px;
   border-radius: 1rem;
 }
 
@@ -167,16 +179,16 @@
 }
 
 .eliminar-pedido-btn {
-  margin-top: 10px;
-  width: 100%;
-  padding: 8px;
   border: none;
-  border-radius: 0.5rem;
-  background: var(--color-fondo);
-  color: var(--color-letra);
-  opacity: 0.5;
-  font-size: 0.75rem;
+  opacity: 0.7;
   cursor: pointer;
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  background-color: #121212;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 1rem;
 }
 
 .eliminar-pedido-btn:hover {
@@ -247,10 +259,11 @@
 }
 
 /* BOTON IMPRIMIR */
-.imprimir-pedido-btn{
+.imprimir-pedido-btn {
+  display: block;
   border: none;
   background-color: transparent;
-  margin: 5px 0;
+  margin: 15px auto 5px;
   cursor: pointer;
   font-size: 1.2rem;
 }
