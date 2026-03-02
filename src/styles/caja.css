@@ -103,6 +103,28 @@
   flex-wrap: wrap;
 }
 
+/* ================= REFRESH SIMPLE ================= */
+
+.caja-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-refresh {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 4px;
+  transition: 0.5s ease;
+}
+
+.btn-refresh:hover {
+  color: #fff;
+  transform: rotate(-360deg);
+}
+
 /* ================= BUTTON BASE ================= */
 
 .btn-gasto,
@@ -177,4 +199,166 @@
 .dashboard-stats-open-btn:hover {
   background: #1c1c22;
   border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ================= REGISTRO COMPACTO ================= */
+
+.caja-registro {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.registro-header h4 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  margin-bottom: 15px;
+}
+
+/* LISTA */
+
+.registro-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* FILA COMPACTA */
+
+.registro-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #111;
+  cursor: pointer;
+  transition: 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.registro-row:hover {
+  background: #1a1a1f;
+  transform: translateX(3px);
+}
+
+.registro-fecha {
+  font-size: 0.8rem;
+  color: #bbb;
+  font-weight: 500;
+}
+
+.registro-total {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #4caf50;
+}
+
+.registro-total.negativo {
+  color: #ff5252;
+}
+
+/* PANEL EXPANDIDO */
+
+.registro-panel {
+  margin-top: 6px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #16161c;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* RESUMEN */
+
+.panel-resumen {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+.panel-resumen strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+/* DETALLE GASTOS */
+
+.panel-detalle {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detalle-titulo {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #777;
+}
+
+.detalle-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #ccc;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.detalle-desc {
+  display: block;
+  font-weight: 500;
+}
+
+.detalle-hora {
+  font-size: 0.7rem;
+  color: #777;
+}
+
+.detalle-monto {
+  font-weight: 600;
+}
+
+/* ================= CONTENEDOR SCROLL REGISTRO ================= */
+.registro-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  max-height: 320px; /* Ajustable */
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+/* Scroll personalizado */
+
+.registro-lista::-webkit-scrollbar {
+  width: 6px;
+}
+
+.registro-lista::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.registro-lista::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+}
+
+.registro-lista::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.caja-status-abierta {
+  margin: 5px 0;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  font-style: italic;
 }

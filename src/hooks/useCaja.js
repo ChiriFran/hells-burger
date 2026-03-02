@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { db } from "../firebase/config";
 import {
   doc,
@@ -22,9 +22,12 @@ export const useCaja = () => {
 
   const fecha = new Date().toISOString().slice(0, 10);
 
-  /* ================= CAJA DEL DÍA ================= */
-  useEffect(() => {
-    const fetchCaja = async () => {
+  /* ================= FUNCIÓN CENTRAL DE CARGA ================= */
+  const cargarDatos = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      // 🔹 Caja del día
       const ref = doc(db, "caja", fecha);
       const snap = await getDoc(ref);
 
@@ -40,25 +43,26 @@ export const useCaja = () => {
         await setDoc(ref, inicial);
         setCaja(inicial);
       }
-    };
 
-    fetchCaja();
-  }, [fecha]);
-
-  /* ================= HISTÓRICO ================= */
-  useEffect(() => {
-    const fetchCajas = async () => {
+      // 🔹 Histórico
       const snapshot = await getDocs(collection(db, "caja"));
       const data = snapshot.docs.map((d) => ({
         fecha: d.id,
         ...d.data(),
       }));
-      setCajas(data);
-      setLoading(false);
-    };
 
-    fetchCajas();
-  }, []);
+      setCajas(data);
+    } catch (error) {
+      console.error("Error cargando caja:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [fecha]);
+
+  /* ================= LOAD INICIAL ================= */
+  useEffect(() => {
+    cargarDatos();
+  }, [cargarDatos]);
 
   /* ================= INGRESOS ================= */
   const agregarIngreso = async (monto) => {
@@ -66,6 +70,7 @@ export const useCaja = () => {
     const nuevo = (caja.ingresos || 0) + monto;
 
     await setDoc(ref, { ingresos: nuevo }, { merge: true });
+
     setCaja((prev) => ({ ...prev, ingresos: nuevo }));
   };
 
@@ -102,6 +107,7 @@ export const useCaja = () => {
     const cierre = (caja.ingresos || 0) - (caja.gastos || 0);
 
     await setDoc(ref, { cierre }, { merge: true });
+
     setCaja((prev) => ({ ...prev, cierre }));
   };
 
@@ -112,5 +118,6 @@ export const useCaja = () => {
     agregarIngreso,
     agregarGasto,
     cerrarCaja,
+    refetch: cargarDatos, // 🔥 ahora podés refrescar sin recargar página
   };
 };

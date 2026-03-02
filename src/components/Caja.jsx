@@ -3,11 +3,12 @@ import { useCaja } from "../hooks/useCaja";
 import "../styles/caja.css";
 
 export default function Caja() {
-  const { caja, agregarGasto, cerrarCaja } = useCaja();
+  const { caja, cajas, agregarGasto, cerrarCaja, refetch, loading } = useCaja();
 
   const [montoGasto, setMontoGasto] = useState("");
   const [descGasto, setDescGasto] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [openDay, setOpenDay] = useState(null);
 
   const totalCierre = (caja?.ingresos || 0) - (caja?.gastos || 0);
 
@@ -20,8 +21,8 @@ export default function Caja() {
       return;
     }
 
-    if (loading) return;
-    setLoading(true);
+    if (saving) return;
+    setSaving(true);
 
     try {
       await agregarGasto({ monto: valor, descripcion: descGasto });
@@ -31,14 +32,21 @@ export default function Caja() {
       console.error("Error agregando gasto:", err);
       alert("Error al guardar gasto");
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
   /* ================= CERRAR CAJA ================= */
-  const handleCerrarCaja = () => {
+  const handleCerrarCaja = async () => {
     if (!window.confirm("⚠️ Seguro que querés cerrar la caja del día?")) return;
-    cerrarCaja();
+
+    await cerrarCaja();
+    await refetch(); // 🔥 actualiza después de cerrar
+  };
+
+  /* ================= REFRESH ================= */
+  const handleRefresh = async () => {
+    await refetch();
   };
 
   return (
@@ -46,7 +54,24 @@ export default function Caja() {
       {/* HEADER */}
       <header className="caja-header">
         <h2 className="caja-title">💰 Caja del Día</h2>
+
+        <button
+          className="btn-refresh"
+          onClick={handleRefresh}
+          title="Refrescar"
+          disabled={loading}
+        >
+          ↺
+        </button>
       </header>
+
+      {/* STATUS */}
+      {!caja?.cierre && (
+        <div className="caja-status-abierta">
+          <span className="status-dot"></span>
+          Caja abierta
+        </div>
+      )}
 
       {/* TARJETAS */}
       <section className="caja-cards">
@@ -70,7 +95,7 @@ export default function Caja() {
           <div className="caja-icon">🏁</div>
           <div>
             <span className="caja-value">${totalCierre}</span>
-            <span className="caja-label">Cierre</span>
+            <span className="caja-label">Resultado</span>
           </div>
         </div>
       </section>
@@ -96,9 +121,9 @@ export default function Caja() {
           <button
             className="btn-gasto"
             onClick={handleAgregarGasto}
-            disabled={loading}
+            disabled={saving}
           >
-            {loading ? "Guardando..." : "➖ Agregar gasto"}
+            {saving ? "Guardando..." : "➖ Agregar gasto"}
           </button>
         </div>
 
@@ -106,6 +131,98 @@ export default function Caja() {
           🔒 Cerrar caja
         </button>
       </section>
+
+      {/* ================= REGISTRO ================= */}
+      {cajas?.length > 0 && (
+        <section className="caja-registro">
+          <div className="registro-header">
+            <h4>Registro</h4>
+          </div>
+
+          <div className="registro-lista">
+            {[...cajas]
+              .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+              .map((dia) => {
+                const resultado = (dia.ingresos || 0) - (dia.gastos || 0);
+
+                const isOpen = openDay === dia.fecha;
+
+                return (
+                  <div key={dia.fecha} className="registro-dia">
+                    <div
+                      className="registro-row"
+                      onClick={() => setOpenDay(isOpen ? null : dia.fecha)}
+                    >
+                      <span className="registro-fecha">
+                        {new Date(dia.fecha).toLocaleDateString("es-AR", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </span>
+
+                      <span
+                        className={`registro-total ${
+                          resultado < 0 ? "negativo" : ""
+                        }`}
+                      >
+                        ${resultado}
+                      </span>
+                    </div>
+
+                    {isOpen && (
+                      <div className="registro-panel">
+                        <div className="panel-resumen">
+                          <div>
+                            <span>Ingresos</span>
+                            <strong>${dia.ingresos || 0}</strong>
+                          </div>
+                          <div>
+                            <span>Gastos</span>
+                            <strong>${dia.gastos || 0}</strong>
+                          </div>
+                        </div>
+
+                        {dia.gastosDetalle?.length > 0 && (
+                          <div className="panel-detalle">
+                            <span className="detalle-titulo">
+                              Detalle de gastos
+                            </span>
+
+                            {dia.gastosDetalle.map((g, i) => {
+                              const hora = new Date(
+                                g.fechaHora,
+                              ).toLocaleTimeString("es-AR", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              });
+
+                              return (
+                                <div key={i} className="detalle-item">
+                                  <div>
+                                    <span className="detalle-desc">
+                                      {g.descripcion}
+                                    </span>
+                                    <span className="detalle-hora">
+                                      {hora} hs
+                                    </span>
+                                  </div>
+                                  <span className="detalle-monto">
+                                    ${g.monto}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
