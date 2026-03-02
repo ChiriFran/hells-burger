@@ -15,7 +15,7 @@ export default function PedidosLista() {
   const [visibleCount, setVisibleCount] = useState(5);
   const [limpio, setLimpio] = useState(false);
   const [filtroTiempo, setFiltroTiempo] = useState("todos");
-  const [filtroEntrega, setFiltroEntrega] = useState("todos"); // 👈 nuevo
+  const [filtroEntrega, setFiltroEntrega] = useState("todos");
 
   useEffect(() => {
     const pedidosRef = collection(db, "pedidos");
@@ -51,11 +51,75 @@ export default function PedidosLista() {
     }
   };
 
+  // 🖨 FUNCIÓN DE IMPRESIÓN COMPACTA
+  const imprimirPedido = (pedido) => {
+    const WIDTH = 32;
+
+    const centerText = (text) => {
+      const spaces = Math.max(0, Math.floor((WIDTH - text.length) / 2));
+      return " ".repeat(spaces) + text;
+    };
+
+    const line = "=".repeat(WIDTH);
+    const separator = "-".repeat(WIDTH);
+
+    const fecha = pedido.horaInicio?.toDate
+      ? pedido.horaInicio.toDate()
+      : new Date(pedido.horaInicio);
+
+    const hora = fecha.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    const productos = pedido.productos
+      ?.map((p) => `${p.cantidad}x ${p.nombre}`)
+      .join("\n");
+
+    // Alinear total a la derecha
+    const totalText = `TOTAL: $${pedido.total}`;
+    const totalAligned =
+      "TOTAL:" +
+      " ".repeat(WIDTH - 7 - pedido.total.toString().length - 1) +
+      `$${pedido.total}`;
+
+    const envio =
+      pedido.tipoEntrega === "envio" && pedido.envio
+        ? `\n${pedido.cliente}\n${pedido.envio.direccion}\n${pedido.envio.barrio}`
+        : "";
+
+    const ticket = `
+${line}
+${centerText("PEDIDO #" + pedido.id.slice(0, 6))}
+${centerText(hora + "  " + (pedido.tipoEntrega === "envio" ? "ENVIO" : "MESA"))}
+${line}
+
+${productos}
+
+${separator}
+${totalAligned}
+${separator}
+${envio}
+
+`;
+
+    const ventana = window.open("", "", "width=400,height=600");
+    ventana.document.write(`
+    <pre style="
+      font-family: monospace;
+      font-size: 12px;
+      margin: 0;
+    ">
+${ticket}
+    </pre>
+  `);
+    ventana.document.close();
+    ventana.print();
+  };
+
   const ahora = Date.now();
 
-  // 🔥 FILTRO COMPLETO (tiempo + entrega)
   const pedidosFiltrados = pedidos.filter((pedido) => {
-    // ⏱️ FILTRO TIEMPO
     if (filtroTiempo !== "todos") {
       if (!pedido.horaInicio) return true;
 
@@ -70,7 +134,6 @@ export default function PedidosLista() {
       if (filtroTiempo === "120" && diffMin > 120) return false;
     }
 
-    // 🚚 FILTRO ENTREGA (misma lógica que tu render)
     if (filtroEntrega === "envio" && pedido.tipoEntrega !== "envio") {
       return false;
     }
@@ -82,9 +145,7 @@ export default function PedidosLista() {
     return true;
   });
 
-  // 📊 Contadores dinámicos
   const totalEnvios = pedidos.filter((p) => p.tipoEntrega === "envio").length;
-
   const totalMesas = pedidos.filter((p) => p.tipoEntrega !== "envio").length;
 
   const pedidosVisibles = limpio ? [] : pedidosFiltrados.slice(0, visibleCount);
@@ -93,7 +154,6 @@ export default function PedidosLista() {
     <div className="pedidos-lista-container">
       <h2 className="pedidos-lista-title">Pedidos</h2>
 
-      {/* Toolbar cocina */}
       <div className="pedidos-toolbar">
         <button className="toolbar-btn limpiar" onClick={() => setLimpio(true)}>
           🧹 Limpiar vista
@@ -110,7 +170,6 @@ export default function PedidosLista() {
           <option value="120">Últimas 2 horas</option>
         </select>
 
-        {/* 🔥 NUEVO FILTRO ENTREGA */}
         <div className="toolbar-filtros-entrega">
           <button
             className={`toolbar-btn ${
@@ -158,14 +217,21 @@ export default function PedidosLista() {
                 }`}
               >
                 <div className="pedido-header">
-                  <div className="pedido-mesa">
-                    {pedido.tipoEntrega === "envio" ? "🚚 Envío" : "🍽 Mesa"}{" "}
-                    {pedido.mesaNombre || pedido.mesaId}
+                  <div className="pedido-mesa-nombre">
+                    {pedido.tipoEntrega === "envio"
+                      ? "🚚 Envío"
+                      : `🍽 ${pedido.mesaNombre || pedido.mesaId}`}
                   </div>
 
                   <span className={`pedido-estado ${pedido.estado}`}>
                     {pedido.estado}
                   </span>
+                  <button
+                    className="imprimir-pedido-btn"
+                    onClick={() => imprimirPedido(pedido)}
+                  >
+                    🖨️
+                  </button>
                 </div>
 
                 <ul className="pedido-productos">
@@ -181,13 +247,10 @@ export default function PedidosLista() {
 
                 <div className="pedido-footer">
                   <span>Total: ${pedido.total}</span>
-                  <span>Pago: {pedido.medioPago || "Pendiente"}</span>
                 </div>
 
-                {/* DATOS DE ENVÍO */}
                 {pedido.envio && pedido.tipoEntrega === "envio" && (
                   <div className="pedido-envio-box">
-                    <h4>📦 Datos de envío</h4>
                     <p>
                       <b>Cliente:</b> {pedido.cliente}
                     </p>
@@ -195,13 +258,9 @@ export default function PedidosLista() {
                       <b>Dirección:</b> {pedido.envio.direccion},{" "}
                       {pedido.envio.barrio}
                     </p>
-                    <p>
-                      <b>Tel:</b> {pedido.envio.telefono}
-                    </p>
                   </div>
                 )}
 
-                {/* Comentarios */}
                 {pedido.comentarios && pedido.comentarios.trim() !== "" && (
                   <div className="pedido-comentarios">
                     💬 {pedido.comentarios}

@@ -246,6 +246,15 @@
   color: #ffd54f;
 }
 
+/* BOTON IMPRIMIR */
+.imprimir-pedido-btn{
+  border: none;
+  background-color: transparent;
+  margin: 5px 0;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
 /* ================= RESPONSIVE ================= */
 @media (max-width: 600px) {
   .pedidos-lista-container {
