@@ -11,6 +11,8 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 
+import notificationSound from "../../assets/audio/notificationEffect.mp3";
+
 const MesaContext = createContext();
 export const useMesasContext = () => useContext(MesaContext);
 
@@ -22,15 +24,57 @@ export const MesaProvider = ({ children }) => {
   const unsubMesas = useRef(null);
   const unsubPedidos = useRef(null);
 
+  // 🔊 Audio + control de primera carga
+  const audioRef = useRef(null);
+  const firstLoadMesas = useRef(true);
+  const firstLoadPedidos = useRef(true);
+
+  // ================= PREPARAR AUDIO =================
+  useEffect(() => {
+    audioRef.current = new Audio(notificationSound);
+
+    // 🔓 Desbloquea autoplay en el primer click del usuario
+    const unlockAudio = () => {
+      audioRef.current
+        .play()
+        .then(() => {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+        })
+        .catch(() => {});
+      window.removeEventListener("click", unlockAudio);
+    };
+
+    window.addEventListener("click", unlockAudio);
+  }, []);
+
   // ================= SNAPSHOTS =================
   useEffect(() => {
     unsubMesas.current = onSnapshot(collection(db, "mesas"), (snap) => {
+      if (!firstLoadMesas.current) {
+        snap.docChanges().forEach((change) => {
+          if (change.type === "added") {
+            audioRef.current?.play().catch(() => {});
+          }
+        });
+      }
+
       setMesas(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
       setLoadingMesas(false);
+      firstLoadMesas.current = false;
     });
 
     unsubPedidos.current = onSnapshot(collection(db, "pedidos"), (snap) => {
+      if (!firstLoadPedidos.current) {
+        snap.docChanges().forEach((change) => {
+          if (change.type === "added") {
+            audioRef.current?.play().catch(() => {});
+          }
+        });
+      }
+
       setPedidos(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      firstLoadPedidos.current = false;
     });
 
     return () => {
@@ -51,7 +95,7 @@ export const MesaProvider = ({ children }) => {
     return { id: ref.id, nombre };
   };
 
-  // ================= CREAR PEDIDO UNIFICADO =================
+  // ================= CREAR PEDIDO =================
   const crearPedido = async ({
     mesa,
     productos,
@@ -60,7 +104,7 @@ export const MesaProvider = ({ children }) => {
     envio = null,
     comentarios = "",
     cliente = "",
-    tipo = "salon", // salon | publico | delivery
+    tipo = "salon",
   }) => {
     if (!mesa?.id) throw new Error("Mesa inválida");
 
