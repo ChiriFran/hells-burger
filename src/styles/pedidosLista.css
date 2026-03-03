@@ -30,7 +30,6 @@
 }
 
 /* Botones base ya usan .toolbar-btn */
-
 .toolbar-filtros-entrega .toolbar-btn {
   background: #2a2a2a87;
   color: #ccc;
@@ -96,13 +95,13 @@
 
 /* ================= TIPOS DE PEDIDO ================= */
 .pedido-mesa {
-  border-left: 6px solid var(--color-letra);
+  border-left: 6px solid #777;
   background: rgba(96, 95, 95, 0.112);
 }
 
 .pedido-envio {
   border-left: 6px solid var(--color-rojo);
-  background: rgba(142, 18, 18, 0.472);
+  background: rgba(142, 18, 18, 0.282);
 }
 
 /* ================= HEADER ================= */
