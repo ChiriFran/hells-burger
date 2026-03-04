@@ -28,6 +28,8 @@ export default function PedidoModal({ mesa, cerrarModal }) {
   const [submitting, setSubmitting] = useState(false);
   const lockRef = useRef(false);
 
+  const [loading, setLoading] = useState(false);
+
   // ===================== 🔥 NOMBRE CON EXTRAS =====================
   const buildNombreConExtras = (p) => {
     let nombre = p.nombreBase || p.nombre;
@@ -47,19 +49,26 @@ export default function PedidoModal({ mesa, cerrarModal }) {
   // ===================== CARGAR PEDIDO =====================
   useEffect(() => {
     const cargar = async () => {
-      if (mesa.pedidoActual) {
-        const pedido = await obtenerPedidoPorId(mesa.pedidoActual);
-        setProductos(pedido?.productos || []);
-      } else {
-        setProductos([]);
+      setLoading(true);
+
+      try {
+        if (mesa.pedidoActual) {
+          const pedido = await obtenerPedidoPorId(mesa.pedidoActual);
+          setProductos(pedido?.productos || []);
+        } else {
+          setProductos([]);
+        }
+      } finally {
+        setLoading(false);
       }
     };
+
     cargar();
   }, [mesa]);
 
   // ===================== AGREGAR MANUAL =====================
   const agregarProducto = async () => {
-    if (!nombre || !precio || cantidad < 1 || submitting) return;
+    if (!nombre || !precio || cantidad < 1 || loading) return;
 
     const item = {
       nombre: nombre.trim(),
@@ -73,16 +82,16 @@ export default function PedidoModal({ mesa, cerrarModal }) {
       usarDoble: false,
     };
 
-    if (mesa.estado === "ocupada" && mesa.pedidoActual) {
-      setSubmitting(true);
-      try {
+    setLoading(true);
+
+    try {
+      if (mesa.estado === "ocupada" && mesa.pedidoActual) {
         await agregarProductosAlPedido(mesa.pedidoActual, [item]);
-        setProductos((prev) => [...prev, item]);
-      } finally {
-        setSubmitting(false);
       }
-    } else {
+
       setProductos((prev) => [...prev, item]);
+    } finally {
+      setLoading(false);
     }
 
     setNombre("");
@@ -92,7 +101,9 @@ export default function PedidoModal({ mesa, cerrarModal }) {
 
   // ===================== AGREGAR DESDE LISTA =====================
   const agregarProductoDirecto = async (producto) => {
-    if (submitting) return;
+    if (loading) return;
+
+    setLoading(true);
 
     const item = {
       nombre: producto.titulo,
@@ -106,19 +117,16 @@ export default function PedidoModal({ mesa, cerrarModal }) {
       subtotal: Number(producto.precio),
     };
 
-    if (mesa.estado === "ocupada" && mesa.pedidoActual) {
-      setSubmitting(true);
-      try {
+    try {
+      if (mesa.estado === "ocupada" && mesa.pedidoActual) {
         await agregarProductosAlPedido(mesa.pedidoActual, [item]);
-        setProductos((prev) => [...prev, item]);
-      } finally {
-        setSubmitting(false);
       }
-    } else {
-      setProductos((prev) => [...prev, item]);
-    }
 
-    setShowProductos(false);
+      setProductos((prev) => [...prev, item]);
+      setShowProductos(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // ===================== SUBTOTAL =====================
@@ -152,14 +160,14 @@ export default function PedidoModal({ mesa, cerrarModal }) {
   // ===================== CREAR PEDIDO =====================
   const handleCrear = async () => {
     if (
-      submitting ||
+      loading ||
       lockRef.current ||
       mesa.estado !== "libre" ||
       productos.length === 0
     )
       return;
 
-    setSubmitting(true);
+    setLoading(true);
     lockRef.current = true;
 
     try {
@@ -177,7 +185,7 @@ export default function PedidoModal({ mesa, cerrarModal }) {
 
       cerrarModal();
     } finally {
-      setSubmitting(false);
+      setLoading(false);
       lockRef.current = false;
     }
   };
@@ -185,21 +193,21 @@ export default function PedidoModal({ mesa, cerrarModal }) {
   // ===================== CERRAR PEDIDO =====================
   const handleCerrar = async () => {
     if (
-      submitting ||
+      loading ||
       lockRef.current ||
       mesa.estado !== "ocupada" ||
       !mesa.pedidoActual
     )
       return;
 
-    setSubmitting(true);
+    setLoading(true);
     lockRef.current = true;
 
     try {
       await cerrarPedido(mesa.pedidoActual, medioPago);
       cerrarModal();
     } finally {
-      setSubmitting(false);
+      setLoading(false);
       lockRef.current = false;
     }
   };
@@ -429,6 +437,14 @@ export default function PedidoModal({ mesa, cerrarModal }) {
             Cancelar
           </button>
         </div>
+        {loading && (
+          <div className="global-loader-overlay">
+            <div className="global-loader-box">
+              <div className="big-spinner"></div>
+              <p>Procesando...</p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* MODAL PRODUCTOS */}

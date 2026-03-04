@@ -11,8 +11,6 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 
-import notificationSound from "../../assets/audio/notificationEffect.mp3";
-
 const MesaContext = createContext();
 export const useMesasContext = () => useContext(MesaContext);
 
@@ -30,10 +28,12 @@ export const MesaProvider = ({ children }) => {
   const firstLoadPedidos = useRef(true);
 
   // ================= PREPARAR AUDIO =================
+  // 🔊 Audio + control de primera carga
   useEffect(() => {
-    audioRef.current = new Audio(notificationSound);
+    audioRef.current = new Audio("/audio/notificationEffect.mp3");
+    audioRef.current.volume = 0.8; // opcional
 
-    // 🔓 Desbloquea autoplay en el primer click del usuario
+    // 🔓 Desbloquea autoplay en el primer click
     const unlockAudio = () => {
       audioRef.current
         .play()
@@ -42,10 +42,15 @@ export const MesaProvider = ({ children }) => {
           audioRef.current.currentTime = 0;
         })
         .catch(() => {});
+
       window.removeEventListener("click", unlockAudio);
     };
 
     window.addEventListener("click", unlockAudio);
+
+    return () => {
+      window.removeEventListener("click", unlockAudio);
+    };
   }, []);
 
   // ================= SNAPSHOTS =================
