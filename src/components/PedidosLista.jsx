@@ -6,6 +6,7 @@ import {
   query,
   orderBy,
   doc,
+  getDoc,
   deleteDoc,
 } from "firebase/firestore";
 import "../styles/pedidosLista.css";
@@ -37,14 +38,30 @@ export default function PedidosLista() {
     setVisibleCount((prev) => prev + 5);
   };
 
-  const eliminarPedido = async (id) => {
-    const confirmar = window.confirm(
-      "¿Seguro que querés eliminar este pedido?",
-    );
-    if (!confirmar) return;
-
+  const eliminarPedido = async (pedido) => {
     try {
-      await deleteDoc(doc(db, "pedidos", id));
+      const pedidoRef = doc(db, "pedidos", pedido.id);
+      const pedidoSnap = await getDoc(pedidoRef);
+
+      if (!pedidoSnap.exists()) {
+        alert("El pedido no existe");
+        return;
+      }
+
+      const pedidoData = pedidoSnap.data();
+
+      // 🔒 Verificación real en base de datos
+      if (pedidoData.estado !== "pagado") {
+        alert("Solo se pueden eliminar pedidos PAGADOS");
+        return;
+      }
+
+      const confirmar = window.confirm(
+        "¿Seguro que querés eliminar este pedido?",
+      );
+      if (!confirmar) return;
+
+      await deleteDoc(pedidoRef);
     } catch (error) {
       console.error(error);
       alert("Error al eliminar el pedido");
@@ -228,7 +245,7 @@ ${ticket}
                   </span>
                   <button
                     className="eliminar-pedido-btn"
-                    onClick={() => eliminarPedido(pedido.id)}
+                    onClick={() => eliminarPedido(pedido)}
                   >
                     ⚠️ Eliminar
                   </button>
