@@ -141,9 +141,12 @@ export default function Caja() {
 
           <div className="registro-lista">
             {[...cajas]
-              .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+              .sort((a, b) => b.fecha.localeCompare(a.fecha))
               .map((dia) => {
                 const resultado = (dia.ingresos || 0) - (dia.gastos || 0);
+
+                const [year, month, day] = dia.fecha.split("-");
+                const fechaLocal = new Date(year, month - 1, day);
 
                 const isOpen = openDay === dia.fecha;
 
@@ -154,13 +157,12 @@ export default function Caja() {
                       onClick={() => setOpenDay(isOpen ? null : dia.fecha)}
                     >
                       <span className="registro-fecha">
-                        {new Date(dia.fecha).toLocaleDateString("es-AR", {
+                        {fechaLocal.toLocaleDateString("es-AR", {
                           day: "2-digit",
                           month: "short",
                           year: "numeric",
                         })}
                       </span>
-
                       <span
                         className={`registro-total ${
                           resultado < 0 ? "negativo" : ""

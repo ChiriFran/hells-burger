@@ -7,6 +7,7 @@ import {
   collection,
   getDocs,
   arrayUnion,
+  serverTimestamp,
 } from "firebase/firestore";
 
 export const useCaja = () => {
@@ -20,14 +21,25 @@ export const useCaja = () => {
   const [cajas, setCajas] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fecha = new Date().toISOString().slice(0, 10);
+  /* ================= FECHA LOCAL ARGENTINA ================= */
+  const getFechaLocal = () => {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const fecha = getFechaLocal();
 
   /* ================= FUNCIÓN CENTRAL DE CARGA ================= */
   const cargarDatos = useCallback(async () => {
     setLoading(true);
 
     try {
-      // 🔹 Caja del día
+      /* 🔹 Caja del día */
       const ref = doc(db, "caja", fecha);
       const snap = await getDoc(ref);
 
@@ -39,17 +51,23 @@ export const useCaja = () => {
           gastos: 0,
           cierre: 0,
           gastosDetalle: [],
+          createdAt: serverTimestamp(),
         };
+
         await setDoc(ref, inicial);
         setCaja(inicial);
       }
 
-      // 🔹 Histórico
+      /* 🔹 Histórico */
       const snapshot = await getDocs(collection(db, "caja"));
+
       const data = snapshot.docs.map((d) => ({
-        fecha: d.id,
+        fecha: d.id, // ID = YYYY-MM-DD
         ...d.data(),
       }));
+
+      // 🔥 ORDEN CORRECTO SIN new Date()
+      data.sort((a, b) => b.fecha.localeCompare(a.fecha));
 
       setCajas(data);
     } catch (error) {
@@ -69,7 +87,14 @@ export const useCaja = () => {
     const ref = doc(db, "caja", fecha);
     const nuevo = (caja.ingresos || 0) + monto;
 
-    await setDoc(ref, { ingresos: nuevo }, { merge: true });
+    await setDoc(
+      ref,
+      {
+        ingresos: nuevo,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true },
+    );
 
     setCaja((prev) => ({ ...prev, ingresos: nuevo }));
   };
@@ -82,7 +107,7 @@ export const useCaja = () => {
     const gastoObj = {
       monto,
       descripcion,
-      fechaHora: new Date().toISOString(),
+      fechaHora: new Date().toISOString(), // esto está bien para detalle
     };
 
     await setDoc(
@@ -90,6 +115,7 @@ export const useCaja = () => {
       {
         gastos: nuevoTotal,
         gastosDetalle: arrayUnion(gastoObj),
+        updatedAt: serverTimestamp(),
       },
       { merge: true },
     );
@@ -106,7 +132,14 @@ export const useCaja = () => {
     const ref = doc(db, "caja", fecha);
     const cierre = (caja.ingresos || 0) - (caja.gastos || 0);
 
-    await setDoc(ref, { cierre }, { merge: true });
+    await setDoc(
+      ref,
+      {
+        cierre,
+        fechaCierre: serverTimestamp(),
+      },
+      { merge: true },
+    );
 
     setCaja((prev) => ({ ...prev, cierre }));
   };
@@ -118,6 +151,6 @@ export const useCaja = () => {
     agregarIngreso,
     agregarGasto,
     cerrarCaja,
-    refetch: cargarDatos, // 🔥 ahora podés refrescar sin recargar página
+    refetch: cargarDatos,
   };
 };
